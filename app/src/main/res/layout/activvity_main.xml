@@ -1,0 +1,68 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+     >
+ 
+    <RelativeLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/Title"
+    android:padding="3dp"
+     >
+     <TextView
+         android:id="@+id/Title_id"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignParentLeft="true" 
+         android:textSize="20sp"
+         android:paddingRight="25dp"
+         android:text="@string/id"
+         />
+    <TextView 
+        android:id="@+id/Title_name"
+        android:layout_width="wrap_content"
+        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:layout_toRightOf="@id/Title_id"
+        android:textSize="20sp"
+        android:paddingRight="13dp"
+        android:text="@string/name"
+        />
+    <TextView 
+        android:id="@+id/Title_chuxi"
+        android:layout_width="wrap_content"
+        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:layout_toRightOf="@id/Title_name"
+        android:textSize="20sp"
+        android:paddingLeft="50dp"
+        android:paddingRight="20dp"
+        android:text="@string/chuxi"
+        />
+    <TextView 
+        android:id="@+id/Title_quexi"
+        android:layout_width="wrap_content"
+        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:layout_toRightOf="@id/Title_chuxi"
+        android:textSize="20sp"
+        android:paddingRight="20dp"
+        android:text="@string/quexi"
+        />
+    <TextView 
+        android:id="@+id/Title_qingjia"
+        android:layout_width="wrap_content"
+        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:layout_toRightOf="@id/Title_quexi"
+        android:textSize="20sp"
+        android:layout_alignParentRight="true"
+        android:text="@string/qingjia"
+        />
+</RelativeLayout>
+    
+    <ExpandableListView
+        android:id="@+id/main_expandablelistview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        
+         />
+ 
+</RelativeLayout>

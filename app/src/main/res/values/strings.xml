@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">NFC_Teacher</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="set">设置</string>
+    <string name="create">新建名单</string>
+    <string name="select">选择名单</string>
+    <string name="back_main">回到主页</string>
+    <string name="Open_NFC">打开NFC</string>
+    <string name="exit">退出软件</string>
+    <string name="about">关于我们</string>
+    <string name="sum_show">统计</string>
+    <string name="normalattendence_button">正常签到</string>
+    <string name="normalattendence_Activity">正常签到中</string>
+    <string name="name_CreateNameList">新建名单</string>
+    <string name="name_ListViewDB">签到情况显示</string>
+    <string name="id">id</string>
+    <string name="name">姓名</string>
+    <string name="xuehao">学号</string>
+    <string name="chuxi">出席</string>
+    <string name="quexi">缺席</string>
+    <string name="qingjia">请假</string>
+    <string name="tip_empty_folder">Empty Folder</string>
+    <string name="type_here">点此输入</string>
+    <string name="chooseList_textview">数据库导入历史</string>
+    <string name="NA_pause">暂停</string>
+    <string name="NA_stop">完成签到</string>
+    <string name="NA_choudian">抽点</string>
+    <string name="NA_FileChooser">选择文件</string>
+    <string name="reflect_information_title">反馈信息汇总</string>
+    <string name="reflect_infor_title">反馈信息汇总</string>
+</resources>
