@@ -367,115 +367,117 @@ public class NormalAttendence extends Activity
             //Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             Parcelable[] rawMsgs =
                     intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-            // only one message sent during the beam
-            NdefMessage msg = (NdefMessage)rawMsgs[0];
-            // 获取id数组
-            //byte[] bytesId = tag.getId();
-            System.out.println("自动写入成功,接收的数据长度为："+msg.getRecords().length);
+            if(rawMsgs!=null) {
+                // only one message sent during the beam
+                NdefMessage msg = (NdefMessage) rawMsgs[0];
+                // 获取id数组
+                //byte[] bytesId = tag.getId();
+                System.out.println("自动写入成功,接收的数据长度为：" + msg.getRecords().length);
 
-            for(int i=0;i<msg.getRecords().length;i+=4){
-                result_macaddress=new String(msg.getRecords()[i].getPayload(),"GBK").substring(1);
-                String result_strname=new String(msg.getRecords()[i+1].getPayload(),"UTF-8");
-                String result_strxuehao=new String(msg.getRecords()[i+2].getPayload(),"UTF-8").substring(1,11);
-                String result_strreflect_infor=new String(msg.getRecords()[i+3].getPayload(),"UTF-8");
-                StaticValue.reflect_information.add(result_strreflect_infor);
-                FileHelper.writeSDFile(result_strreflect_infor, StaticValue.MY_TABLE_NAME+".txt");
-                //Toast.makeText(this, result_strname+result_strxuehao, Toast.LENGTH_LONG).show();
+                for (int i = 0; i < msg.getRecords().length; i += 4) {
+                    result_macaddress = new String(msg.getRecords()[i].getPayload(), "GBK").substring(1);
+                    String result_strname = new String(msg.getRecords()[i + 1].getPayload(), "UTF-8");
+                    String result_strxuehao = new String(msg.getRecords()[i + 2].getPayload(), "UTF-8").substring(1, 11);
+                    String result_strreflect_infor = new String(msg.getRecords()[i + 3].getPayload(), "UTF-8");
+                    StaticValue.reflect_information.add(result_strreflect_infor);
+                    FileHelper.writeSDFile(result_strreflect_infor, StaticValue.MY_TABLE_NAME + ".txt");
+                    //Toast.makeText(this, result_strname+result_strxuehao, Toast.LENGTH_LONG).show();
 
-                //获取数据库中原本的出勤数据
-                int[] result=new int[3];
-                result=SQLiteManager.query_all(StaticValue.MY_TABLE_NAME, result_strxuehao);
+                    //获取数据库中原本的出勤数据
+                    int[] result = new int[3];
+                    result = SQLiteManager.query_all(StaticValue.MY_TABLE_NAME, result_strxuehao);
 
-                //计算时间间隔避免重复签到
-                long hours=3;
-                Timestamp now = new Timestamp(System.currentTimeMillis());//获取系统当前时间
-                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//定义格式，不显示毫秒
-                String str = df.format(now);
-                String time = SQLiteManager.query_time(StaticValue.MY_TABLE_NAME, result_strxuehao);
-                Timestamp SQL_time = Timestamp.valueOf(time);
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                try {
-                    java.util.Date date = format.parse(time);
-                    java.util.Date date2 = format.parse(str);
-                    //计算时间间隔
-                    Calendar c1 = Calendar.getInstance();
-                    c1.setTime(date);
-                    Calendar c2 = Calendar.getInstance();
-                    c2.setTime(date2);
-                    long l1 = c1.getTimeInMillis();
-                    long l2 = c2.getTimeInMillis();
-                    hours = (l2-l1)/(3600000);
-                    //System.out.println("时间间隔为："+l2+"-"+l1+"="+hours);
-                    //System.out.println("===数据库中的日期是："+date);
-                    //System.out.println("====现在的日期是："+date2);
-                } catch (ParseException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
-                //System.out.println("数据库中时间为："+time);
-
-
-                int int_chuxi;
-                int int_quexi=result[1];
-                int int_qingjia=result[2];
-                if(hours>=2){//默认两个小时内不能重复签到
-                    int_chuxi=result[0]+1;//每一次接触都会让出席记录+1，其他不变
-
-                    SQLiteManager.updateData(StaticValue.MY_TABLE_NAME, result_strname,
-                            result_strxuehao, int_chuxi, int_quexi, int_qingjia,now);
-                    Toast.makeText(this, result_strname+" "+
-                                    result_strxuehao+"信息被修改"+"\n"
-                                    +"修改后的出席："+int_chuxi
-                                    +"\n修改后的缺席："+int_quexi
-                                    +"\n修改后的请假："+int_qingjia
-                                    +"反馈信息为："+result_strreflect_infor,
-                            Toast.LENGTH_LONG).show();
-                    show_attendence.setText(result_strname+"信息被修改"+"\n"
-                            +"修改后的出席："+int_chuxi
-                            +"\n修改后的缺席："+int_quexi
-                            +"\n修改后的请假："+int_qingjia);
-                }else
-                {
-                    Toast.makeText(this,"已经重复签到啦！！！",Toast.LENGTH_LONG).show();
-                    int_chuxi=result[0];
-                }
+                    //计算时间间隔避免重复签到
+                    long hours = 3;
+                    Timestamp now = new Timestamp(System.currentTimeMillis());//获取系统当前时间
+                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//定义格式，不显示毫秒
+                    String str = df.format(now);
+                    String time = SQLiteManager.query_time(StaticValue.MY_TABLE_NAME, result_strxuehao);
+                    Timestamp SQL_time = Timestamp.valueOf(time);
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    try {
+                        java.util.Date date = format.parse(time);
+                        java.util.Date date2 = format.parse(str);
+                        //计算时间间隔
+                        Calendar c1 = Calendar.getInstance();
+                        c1.setTime(date);
+                        Calendar c2 = Calendar.getInstance();
+                        c2.setTime(date2);
+                        long l1 = c1.getTimeInMillis();
+                        long l2 = c2.getTimeInMillis();
+                        hours = (l2 - l1) / (3600000);
+                        //System.out.println("时间间隔为："+l2+"-"+l1+"="+hours);
+                        //System.out.println("===数据库中的日期是："+date);
+                        //System.out.println("====现在的日期是："+date2);
+                    } catch (ParseException e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    }
+                    //System.out.println("数据库中时间为："+time);
 
 
+                    int int_chuxi;
+                    int int_quexi = result[1];
+                    int int_qingjia = result[2];
+                    if (hours >= 2) {//默认两个小时内不能重复签到
+                        int_chuxi = result[0] + 1;//每一次接触都会让出席记录+1，其他不变
 
-                System.out.println("+++++++++" + result_macaddress);
-                StaticValue.macaddress=result_macaddress;
-                //Toast.makeText(this, result_macaddress, Toast.LENGTH_LONG).show();
-     	            	    bluetoothDevice=bluetoothAdapter.getRemoteDevice(result_macaddress);
-     	            	    if(bluetoothDevice!=null){
-     	            	    	System.out.println("==获取成功==");
-     	            	    	System.out.println("地址是："+bluetoothDevice.getName());
-     	            	    }
+                        SQLiteManager.updateData(StaticValue.MY_TABLE_NAME, result_strname,
+                                result_strxuehao, int_chuxi, int_quexi, int_qingjia, now);
+                        Toast.makeText(this, result_strname + " " +
+                                        result_strxuehao + "信息被修改" + "\n"
+                                        + "修改后的出席：" + int_chuxi
+                                        + "\n修改后的缺席：" + int_quexi
+                                        + "\n修改后的请假：" + int_qingjia
+                                        + "反馈信息为：" + result_strreflect_infor,
+                                Toast.LENGTH_LONG).show();
+                        show_attendence.setText(result_strname + "信息被修改" + "\n"
+                                + "修改后的出席：" + int_chuxi
+                                + "\n修改后的缺席：" + int_quexi
+                                + "\n修改后的请假：" + int_qingjia);
+                    } else {
+                        Toast.makeText(this, "已经重复签到啦！！！", Toast.LENGTH_LONG).show();
+                        int_chuxi = result[0];
+                    }
 
-                try {
-                    //ClsUtils.removeBond(bluetoothDevice.getClass(), bluetoothDevice);
-                    //System.out.println("取消配对！！");
+
+                    System.out.println("+++++++++" + result_macaddress);
+                    StaticValue.macaddress = result_macaddress;
+                    //Toast.makeText(this, result_macaddress, Toast.LENGTH_LONG).show();
+                    bluetoothDevice = bluetoothAdapter.getRemoteDevice(result_macaddress);
+                    if (bluetoothDevice != null) {
+                        System.out.println("==获取成功==");
+                        System.out.println("地址是：" + bluetoothDevice.getName());
+                    }
+
+                    try {
+                        //ClsUtils.removeBond(bluetoothDevice.getClass(), bluetoothDevice);
+                        //System.out.println("取消配对！！");
      	            	    	/*
      	            	    	ClsUtils.setPin(bluetoothDevice.getClass(), bluetoothDevice, "0000"); // 手机和蓝牙采集器配对
      	            	    	ClsUtils.createBond(bluetoothDevice.getClass(), bluetoothDevice);
      	            	    	ClsUtils.cancelPairingUserInput(bluetoothDevice.getClass(), bluetoothDevice);
      	            	    	*/
-                    ClsUtils.cancelPairingUserInput(bluetoothDevice.getClass(), bluetoothDevice);
-                    ClsUtils.setPin(bluetoothDevice.getClass(), bluetoothDevice, "0000");
-                    ClsUtils.createBond(bluetoothDevice.getClass(), bluetoothDevice);
-                    System.out.println("配对成功！！");
-                    //ClsUtils.pair(result_macaddress, "0000");
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                        ClsUtils.cancelPairingUserInput(bluetoothDevice.getClass(), bluetoothDevice);
+                        ClsUtils.setPin(bluetoothDevice.getClass(), bluetoothDevice, "0000");
+                        ClsUtils.createBond(bluetoothDevice.getClass(), bluetoothDevice);
+                        System.out.println("配对成功！！");
+                        //ClsUtils.pair(result_macaddress, "0000");
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    //System.out.println("地址是："+bluetoothDevice.getName());
+                    if (StaticValue.select_filename != null) {
+                        Thread thead = new sendThread();
+                        thead.start();
+                        System.out.println("连接线程启动成功！！");
+                    } else {
+                        System.out.println("无文件可发！！");
+                    }
                 }
-                //System.out.println("地址是："+bluetoothDevice.getName());
-                if(StaticValue.select_filename!=null){
-                    Thread thead=new sendThread();
-                    thead.start();
-                    System.out.println("连接线程启动成功！！");
-                }else{
-                    System.out.println("无文件可发！！");
-                }
+            }else{
+                System.out.println("收到空数据！！！！！！！！！！！");
             }
 
 
