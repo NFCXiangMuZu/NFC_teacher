@@ -6,7 +6,10 @@ import java.util.Locale;
 import com.example.compaq.nfc_teacher.BluetoothTools;
 import com.example.compaq.nfc_teacher.TransmitBean;
 import com.example.compaq.nfc_teacher.FileSend;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.app.Activity;
@@ -26,9 +29,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -36,8 +41,9 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Switch;
 import android.widget.Toast;
+import android.support.v4.app.FragmentActivity;
 
-public class MainActivity extends Activity {
+public class MainActivity extends SlidingFragmentActivity  implements View.OnClickListener{
 
 	Button set_button;
 	Button Open_NFC;
@@ -47,19 +53,37 @@ public class MainActivity extends Activity {
 	Button Reflect_infor;
 	public static final int RESULT_CODE = 1000;    //选择文件   请求码
 	public static final String SEND_FILE_NAME = "sendFileName";
+	private SlidingMenu menu;
+	private Fragment mContent;
+	NavigationBar nb;
 
 
 	@SuppressWarnings("deprecation")
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE); // 设置无标题
 		setContentView(R.layout.activity_main);
+		setBehindContentView(R.layout.sliding_manu);
 
-		//设置标题不确定性进度条风格
-		//requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		//setContentView(R.layout.progressbar);
-		//显示标题不确定性进度条
-		//setProgressBarIndeterminateVisibility(true);
+		initSlidingMenu(savedInstanceState);//初始化侧滑菜单
+
+        //自定义导航栏
+		nb = (NavigationBar)findViewById(R.id.detailNavBar);
+		nb.setLeftBarButton(getString(R.string.app_name));
+		nb.setRightBarButton(getString(R.string.app_name));
+		nb.setBarTitle(getString(R.string.app_name));
+		NavigationBar.NavigationBarListener nbl = new NavigationBar.NavigationBarListener() {
+			@Override
+			public void OnNavigationButtonClick(int which) {
+				if (which == NavigationBar.NAVIGATION_BUTTON_LEFT) {
+					toggle();
+				} else {
+
+				}
+			}
+		};
+		nb.setNavigationBarListener(nbl);
 
 		set_button=(Button)findViewById(R.id.set_button);
 		Open_NFC=(Button)findViewById(R.id.OpenNFC_button);
@@ -80,6 +104,94 @@ public class MainActivity extends Activity {
 
 
 	}
+
+	/**
+	 * 初始化侧边栏
+	 */
+
+	private void initSlidingMenu(Bundle savedInstanceState) {
+		// 如果保存的状态不为空则得到之前保存的Fragment，否则实例化MyFragment
+		if (savedInstanceState != null) {
+			mContent = getSupportFragmentManager().getFragment(
+					savedInstanceState, "mContent");
+		}
+
+		if (mContent == null) {
+			mContent = new SampleListFragment();
+		}
+
+		// 设置左侧滑动菜单
+		setBehindContentView(R.layout.sliding_manu);
+		getSupportFragmentManager().beginTransaction()
+				.replace(R.id.menu_frame, new SampleListFragment()).commit();
+
+		// 实例化滑动菜单对象
+		SlidingMenu sm = getSlidingMenu();
+		// 设置可以左右滑动的菜单
+		//sm.setMode(SlidingMenu.LEFT);
+		// 设置滑动阴影的宽度
+		//sm.setShadowWidthRes(R.dimen.shadow_width);
+		// 设置滑动菜单阴影的图像资源
+		sm.setShadowDrawable(null);
+		// 设置滑动菜单视图的宽度
+		sm.setBehindWidth(800);
+		// 设置渐入渐出效果的值
+		sm.setFadeDegree(0.35f);
+		// 设置触摸屏幕的模式,这里设置为全屏
+		sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
+		// 设置下方视图的在滚动时的缩放比例
+		sm.setBehindScrollScale(0.0f);
+
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		getSupportFragmentManager().putFragment(outState, "mContent", mContent);
+	}
+
+	/**
+	 * 切换Fragment
+	 *
+	 * @param
+	 **/
+    /*
+	public void switchConent(Fragment fragment, String title) {
+		mContent = fragment;
+		getSupportFragmentManager().beginTransaction()
+				.replace(R.id.content_frame, fragment).commit();
+		getSlidingMenu().showContent();
+		nb.setBarTitle(title);
+	}
+    */
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+			default:
+				break;
+		}
+	}
+
+
+	/*
+
+	@Override
+
+	public void onBackPressed() {
+
+		//点击返回键关闭滑动菜单
+
+		if (menu.isMenuShowing()) {
+
+			menu.showContent();
+
+		} else {
+
+			super.onBackPressed();
+
+		}
+
+	}*/
 
 
 	class listener implements View.OnClickListener{
@@ -211,9 +323,12 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// TODO Auto-generated method stub
-		menu.add(0, 1, 1, R.string.exit);
-		menu.add(0, 2, 2, R.string.about);
-		return super.onCreateOptionsMenu(menu);
+		//menu.add(0, 1, 1, R.string.exit);
+		//menu.add(0, 2, 2, R.string.about);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main, menu);
+		//return super.onCreateOptionsMenu(menu);
+		return true;
 	}
 
 
@@ -250,6 +365,17 @@ public class MainActivity extends Activity {
 				break;
 			case 2:
 				Toast.makeText(getApplicationContext(), "我们棒棒哒！", Toast.LENGTH_LONG).show();
+				break;
+			case R.id.action_refresh:
+				Toast.makeText(this, "Refresh selected", Toast.LENGTH_SHORT)
+						.show();
+				break;
+			// action with ID action_settings was selected
+			case R.id.action_settings:
+				toggle();
+				//showSecondaryMenu();
+				Toast.makeText(this, "Settings selected", Toast.LENGTH_LONG)
+						.show();
 				break;
 			default:
 				break;
