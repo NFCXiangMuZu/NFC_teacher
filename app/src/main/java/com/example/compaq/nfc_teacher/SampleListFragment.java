@@ -21,7 +21,10 @@ import android.widget.ImageView;
 
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -50,10 +53,21 @@ public class SampleListFragment extends ListFragment {
 
         SampleAdapter adapter = new SampleAdapter(getActivity());
 
-        adapter.add(new SampleItem("新建名单", android.R.drawable.sym_action_email));
+        if(StaticValue.MY_TABLE_NAME!=null) {
+            List<String> list = new ArrayList<>();
+            list = FileHelper.readSDFile(StaticValue.MY_TABLE_NAME + ".txt");
+            int width = list.size();
 
-        adapter.add(new SampleItem("选择名单", android.R.drawable.sym_action_email));
+            for (int i = 0; i < width; i++) {
+                System.out.println(list.get(i) + "===========");
+                adapter.add(new SampleItem(list.get(i), android.R.drawable.sym_action_email));
 
+            }
+        }else
+        {
+            System.out.println("没选择班级！！");
+            Toast.makeText(getActivity(),"没选择班级！！",Toast.LENGTH_LONG).show();
+        }
         setListAdapter(adapter);
 
     }

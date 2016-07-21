@@ -3,8 +3,10 @@ package com.example.compaq.nfc_teacher;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -42,45 +44,58 @@ public class NavigationBar extends RelativeLayout implements View.OnClickListene
         this.setBackgroundResource(R.drawable.navigation_bar_bg);
     }
 
-    public void setLeftBarButton(String title) {
-        setButton(title, NAVIGATION_BUTTON_LEFT);
-    }
-
-    public void setRightBarButton(String title) {
-        setButton(title, NAVIGATION_BUTTON_RIGHT);
-    }
-
-    private void setButton(String title, int which) {
-        // remove the old button (if there is one)
-        Button oldButton = (Button) this.findViewWithTag(new Integer(which));
+    public void setLeftBarButton() {
+        ImageButton oldButton = (ImageButton) this.findViewWithTag(new Integer(NAVIGATION_BUTTON_LEFT));
         if (oldButton != null)
             this.removeView(oldButton);
 
-        Button newButton = new Button(mContext);
-        newButton.setTag(new Integer(which)); // used to determine which button is pressed and to remove old buttons
+        ImageButton newButton = new ImageButton(mContext);
+        newButton.setTag(new Integer(NAVIGATION_BUTTON_LEFT)); // used to determine which button is pressed and to remove old buttons
 
         // set OnClickListener
         newButton.setOnClickListener(this);
 
+        //设置按钮图片
+        newButton.setImageDrawable(getResources().getDrawable(R.drawable.wechat));
+        //newButton.setMaxWidth(10);
+        //newButton.setMaxHeight(10);
+
         // set LayoutParams
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(-2, -2);
-        if (which == NAVIGATION_BUTTON_LEFT)
-            lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-        else if (which == NAVIGATION_BUTTON_RIGHT)
-            lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        else
-            throw new IllegalArgumentException("Parameter 'which' must be 0 or 1");
+        lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
         lp.addRule(RelativeLayout.CENTER_VERTICAL);
         lp.setMargins(10, 0, 10, 0);
         newButton.setLayoutParams(lp);
 
-        // set button text
-        newButton.setText(title);
-        newButton.setTextSize(12);
-        newButton.setTextColor(Color.WHITE);
+        // add button
+        this.addView(newButton);
+    }
+
+    public void setRightBarButton() {
+
+        ImageButton oldButton = (ImageButton) this.findViewWithTag(new Integer(NAVIGATION_BUTTON_RIGHT));
+        if (oldButton != null)
+            this.removeView(oldButton);
+
+        ImageButton newButton = new ImageButton(mContext);
+        newButton.setTag(new Integer(NAVIGATION_BUTTON_RIGHT)); // used to determine which button is pressed and to remove old button
+
+        // set OnClickListener
+        newButton.setOnClickListener(this);
+
+        newButton.setImageDrawable(getResources().getDrawable(R.drawable.wechat));
+        //newButton.setMaxHeight(10);
+        //newButton.setMaxWidth(10);
+
+        // set LayoutParams
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(-2, -2);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        lp.addRule(RelativeLayout.CENTER_VERTICAL);
+        lp.setMargins(10, 0, 10, 0);
+        newButton.setLayoutParams(lp);
 
         // set button drawable
-        newButton.setBackgroundResource(R.drawable.navigation_bar_btn);
+       // newButton.setBackgroundResource(R.drawable.navigation_bar_btn);
 
         // add button
         this.addView(newButton);
@@ -103,8 +118,8 @@ public class NavigationBar extends RelativeLayout implements View.OnClickListene
 
         // set text
         newTitle.setText(title);
-        newTitle.setTextSize(22);
-        newTitle.setTextColor(Color.WHITE);
+        newTitle.setTextSize(15);
+        newTitle.setTextColor(Color.BLACK);
 
         // add title to NavigationBar
         this.addView(newTitle);

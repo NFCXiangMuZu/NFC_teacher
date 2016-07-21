@@ -51,57 +51,16 @@ import android.widget.Toast;
 @SuppressLint("SdCardPath")
 public class CreateNameList extends Activity{
 
-
-    Button create;
-    Button select;
-    Button back_main;
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setContentView(R.layout.set);
-
-		/*//选择是否清空数据库
-		AlertDialog.Builder alertdialog=new AlertDialog.Builder(CreateNameList.this);
-		alertdialog.setTitle("是否清空清空数据库？");
-		alertdialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-
-			@Override
-			public void onClick(DialogInterface arg0, int arg1) {
-				// TODO Auto-generated method stub
-				NameListDbHelper.clearall(myhelper);
-			}
-		});
-		alertdialog.setNegativeButton("取消", null);
-		alertdialog.show();
-		*/
-        create=(Button)findViewById(R.id.create_button);
-        select=(Button)findViewById(R.id.select_button);
-        //back_main=(Button)findViewById(R.id.back_main);
-        create.setOnClickListener(new create_listener());
-        select.setOnClickListener(new select_listener());
-        //back_main.setOnClickListener(new back_listener());
-
-        //手势识别
-		/*GestureOverlayView gestures=(GestureOverlayView)findViewById(R.id.gestures);
-		gestures.addOnGesturePerformedListener(new GestureOverlayView.OnGesturePerformedListener() {
-
-			@Override
-			public void onGesturePerformed(GestureOverlayView arg0, Gesture arg1) {
-				// TODO Auto-generated method stub
-				Toast.makeText(CreateNameList.this, "手势识别成功", Toast.LENGTH_LONG).show();
-			}
-		});
-		*/
-        //final GestureLibrary library=GestureLibraries.fromFile("");
     }
 
     //导入Excel文件
     @SuppressWarnings("static-access")
-    public void myExcel(Uri uri) throws Exception{
+    public static void myExcel(Context context,Uri uri) throws Exception{
 
 
         //获取文件
@@ -119,7 +78,7 @@ public class CreateNameList extends Activity{
         //StaticValue.INNERNAMELIST=StaticValue.INNERNAMELIST+sheet.getCell(0, 0).getContents();
         //创建数据库
         System.out.println(StaticValue.MY_TABLE_NAME);
-        SQLiteManager helper=new SQLiteManager(this);
+        SQLiteManager helper=new SQLiteManager(context);
         System.out.println("==========="+StaticValue.MY_TABLE_NAME+"============");
         helper.CreateTable(StaticValue.MY_TABLE_NAME);
 
@@ -132,7 +91,7 @@ public class CreateNameList extends Activity{
                     sheet.getCell(2, i).getContents(),
                     sheet.getCell(1,i).getContents(), 0, 0, 0,now);
         }
-        Toast.makeText(this, "数据成功插入数据库!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "数据成功插入数据库!", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -151,7 +110,7 @@ public class CreateNameList extends Activity{
         //intent.setDataAndType(uri, "application/*");
         try {
             //将数据读取入数据库
-            myExcel(uri);
+            myExcel(this,uri);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -159,130 +118,11 @@ public class CreateNameList extends Activity{
         //System.out.println("回调结果为:"+uri);
         //startActivity(intent);
     }
-
-
-
-    //新建名单的的监听器
-    class create_listener implements View.OnClickListener{
-
-        @Override
-        public void onClick(View arg0) {
-            // TODO Auto-generated method stub
-            Toast.makeText(getApplicationContext(), "新建名单", Toast.LENGTH_LONG).show();
-
-            //弹出框定义
-            AlertDialog.Builder alertdialog=new AlertDialog.Builder(CreateNameList.this);
-            alertdialog.setTitle("请选择点名文件");
-            alertdialog.setPositiveButton("确定",new DialogInterface.OnClickListener(){
-
-                @Override
-                public void onClick(DialogInterface arg0, int arg1) {
-                    // TODO Auto-generated method stub
-                    Intent intent=new Intent(Intent.ACTION_GET_CONTENT);
-                    intent.setType("application/*");
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    try{
-                        startActivityForResult(Intent.createChooser(intent, "请选择点名文件"),1);
-                    }catch(android.content.ActivityNotFoundException ex){
-                        Toast.makeText(getApplicationContext(), "请安装文件选择器", Toast.LENGTH_LONG).show();
-                    }
-                    catch (NullPointerException e) {
-                        // TODO: handle exception
-                        e.printStackTrace();
-                    }
-                }
-
-            });
-            alertdialog.setNegativeButton("取消", null);
-            alertdialog.show();
-        }
-
-    }
-
-    //在文件目录中选择名单文件的监听器
-    class select_listener implements View.OnClickListener{
-
-        @SuppressWarnings("null")
-        @Override
-        public void onClick(View arg0) {
-            // TODO Auto-generated method stub
-            //Toast.makeText(getApplicationContext(), "选择名单", Toast.LENGTH_LONG).show();
-
-            //获取listview对象
-            final ListView CL_listview;
-
-            final Vector<String> db_list_str_2=new Vector<String>();
-            select_namelist(getPackageName().toString(),CreateNameList.this,db_list_str_2);
-
-
-            //展示文件dialog实现
-            AlertDialog.Builder alertdialog=new AlertDialog.Builder(CreateNameList.this);
-            LayoutInflater inflater=LayoutInflater.from(CreateNameList.this);
-            final View dblist_dialog=inflater.inflate(R.layout.chooselist, null);
-            alertdialog.setView(dblist_dialog);
-            CL_listview=(ListView)dblist_dialog.findViewById(R.id.chooselist_ListView);
-
-            load_namelist(db_list_str_2,CL_listview);
-
-
-
-            //添加选中事件
-            CL_listview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
-            {
-
-                @Override
-                public boolean onItemLongClick(AdapterView<?> arg0,
-                                               View arg1, final int arg2, long arg3) {
-                    // TODO Auto-generated method stub
-                    System.out.println("你点击了:"+db_list_str_2.elementAt(arg2));
-                    AlertDialog.Builder alertdialog_long=new AlertDialog.Builder(CreateNameList.this);
-                    alertdialog_long.setTitle("是否选择导入"+db_list_str_2.elementAt(arg2));
-                    alertdialog_long.setNegativeButton("删除该班级", new DialogInterface.OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface arg0, int arg1) {
-                            // TODO Auto-generated method stub
-                            SQLiteManager myhelper = new SQLiteManager(CreateNameList.this);
-                            myhelper.drop_table(db_list_str_2.elementAt(arg2));
-                            select_namelist(getPackageName().toString(),CreateNameList.this,db_list_str_2);
-                            load_namelist(db_list_str_2,CL_listview);
-                        }
-                    });
-                    alertdialog_long.setPositiveButton("确认导入", new DialogInterface.OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface arg0, int arg1) {
-                            // TODO Auto-generated method stub
-                            StaticValue.MY_TABLE_NAME=db_list_str_2.elementAt(arg2);
-                            Toast.makeText(CreateNameList.this,
-                                    StaticValue.MY_TABLE_NAME ,
-                                    Toast.LENGTH_LONG).show();
-                            StaticValue.MAX=44;
-                        }
-                    });
-                    alertdialog_long.show();
-                    return false;
-                }
-
-            });
-
-
-            alertdialog.setTitle("请从新建记录选择点名班级");
-            alertdialog.setNegativeButton("返回", null);
-            alertdialog.show();
-
-            //Toast.makeText(CreateNameList.this, path, Toast.LENGTH_LONG).show();
-
-
-        }
-
-    }
-
     //加载名单列表
-    public void load_namelist(Vector<String> db_list_str,ListView listview)
+    public static void load_namelist(Context context,Vector<String> db_list_str,ListView listview)
     {
         //添加适配器
-        ArrayAdapter<String> adapter=new ArrayAdapter<String>(CreateNameList.this,
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(context,
                 R.layout.chooselistview,db_list_str);
         listview.setAdapter(adapter);
     }

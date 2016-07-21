@@ -252,6 +252,7 @@ public class NormalAttendence extends Activity
                 case R.id.NA_choudian_button:
                     //Toast.makeText(NormalAttendence.this, "你点击了抽点按钮", Toast.LENGTH_LONG).show();
                     break;
+                /*
                 case R.id.NA_FileChooser:
                     System.out.println("======选择文件开始======");
                     //弹出框定义
@@ -280,6 +281,7 @@ public class NormalAttendence extends Activity
                     alertdialog.setNegativeButton("取消", null);
                     alertdialog.show();
                     break;
+                    */
             }
         }
     }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/new_namelist_item"
+        android:title="新建名单"
+        ></item>
+    <item
+        android:id="@+id/choose_namelist_item"
+        android:title="选择名单"
+        ></item>
+    <item
+        android:id="@+id/statistic_of_atten_item"
+        android:title="点名情况"
+        ></item>
+    <item
+        android:id="@+id/choose_file_item"
+        android:title="选择发送文件"
+        ></item>
+    <item
+        android:id="@+id/open_nfc_item"
+        android:title="打开NFC"
+        ></item>
+
+</menu>

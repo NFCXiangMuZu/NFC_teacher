@@ -1,59 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
-    <com.example.compaq.nfc_teacher.NavigationBar
-        android:id="@+id/detailNavBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <Button 
-        android:id="@+id/set_button"
-        android:layout_below="@id/detailNavBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/set"
-        />
-    <Button 
-        android:id="@+id/OpenNFC_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/Open_NFC"
-        android:layout_below="@id/detailNavBar"
-        android:layout_toRightOf="@id/set_button"
-        />
-    <Button
-        android:id="@+id/listview_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" 
-        android:text="@string/sum_show"
-        />
-    <Button 
-        android:id="@+id/NormalAttendence_Button"
-        android:layout_centerInParent="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/normalattendence_button"
-        />
-     <Button 
-            android:id="@+id/NA_FileChooser"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/NA_FileChooser"
-            android:layout_below="@id/detailNavBar"
-            android:layout_toRightOf="@id/OpenNFC_button"
-     />
+    android:background="@drawable/bm">
 
-     <Button
-         android:id="@+id/Reflect_infor"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_alignBaseline="@+id/listview_button"
-         android:layout_alignBottom="@+id/listview_button"
-         android:layout_alignParentRight="true"
-         android:text="@string/reflect_information_title" />
-  
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/reflect_infor_button"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/wechat3"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:scaleType="fitXY"
+        android:background="@null"
+        />
 
-
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/folderbutton"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/folderbutton1"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:scaleType="fitXY"
+        android:background="@null"
+        />
 </RelativeLayout>
