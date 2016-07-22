@@ -3,6 +3,7 @@
     android:layout_height="wrap_content"
     android:id="@+id/SQLiteViewLayout"
     android:padding="3dp"
+    android:background="@color/Color_White"
      >
      <TextView
          android:id="@+id/TextView_id"
@@ -11,6 +12,7 @@
          android:layout_alignParentLeft="true" 
          android:textSize="20sp"
          android:paddingRight="25dp"
+         android:textColor="@color/Color_Black"
          />
     <TextView 
         android:id="@+id/TextView_name"

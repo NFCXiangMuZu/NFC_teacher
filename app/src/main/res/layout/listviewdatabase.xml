@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/listview_layout"
+    android:background="@drawable/bm"
     android:orientation="vertical"
  >
  
@@ -10,8 +11,9 @@
         android:id="@+id/ListDB_title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" 
-        android:textSize="40sp"
+        android:textSize="30sp"
         android:gravity="center"
+        android:textColor="@color/Color_Black"
         />
 <RelativeLayout
     android:layout_width="fill_parent"
@@ -26,7 +28,8 @@
          android:layout_alignParentLeft="true" 
          android:textSize="20sp"
          android:paddingRight="25dp"
-         android:text="@string/id"
+         android:text="序号"
+         android:textColor="@color/Color_Black"
          />
     <TextView 
         android:id="@+id/Title_name"
@@ -36,6 +39,7 @@
         android:textSize="20sp"
         android:paddingRight="13dp"
         android:text="@string/name"
+        android:textColor="@color/Color_Black"
         />
     <TextView 
         android:id="@+id/Title_chuxi"
@@ -46,6 +50,7 @@
         android:paddingLeft="50dp"
         android:paddingRight="20dp"
         android:text="@string/chuxi"
+        android:textColor="@color/Color_Black"
         />
     <TextView 
         android:id="@+id/Title_quexi"
@@ -55,6 +60,7 @@
         android:textSize="20sp"
         android:paddingRight="20dp"
         android:text="@string/quexi"
+        android:textColor="@color/Color_Black"
         />
     <TextView 
         android:id="@+id/Title_qingjia"
@@ -64,6 +70,7 @@
         android:textSize="20sp"
         android:layout_alignParentRight="true"
         android:text="@string/qingjia"
+        android:textColor="@color/Color_Black"
         />
 </RelativeLayout>
     
@@ -72,6 +79,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/namelist_ListView"
         android:divider="#000"
+        android:cacheColorHint="@color/Color_White"
         >
     </ListView>
 

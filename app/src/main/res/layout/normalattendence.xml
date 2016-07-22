@@ -1,46 +1,78 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/NormalAttendence_layout"
-    android:layout_height="fill_parent"
-    android:layout_width="fill_parent"
-    android:orientation="vertical"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bm"
     >
-    
-    <TextView
-        android:id="@+id/NA_showAttendence"
-        android:layout_width="fill_parent"
-        android:layout_height="300sp" 
-        android:gravity="center"
-        android:textSize="30sp"
+
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/NA_backToMain_button"
+        android:src="@drawable/left_high"
+        android:layout_alignParentLeft="true"
+        android:background="@null"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:scaleType="fitXY"
         />
-    <LinearLayout 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center"
-        >
-        <Button
+
+    <Button
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:id="@+id/NA_user_icon_button"
+        android:background="@drawable/user_icon_high"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="100dp"
+        android:layout_centerHorizontal="true"
+        android:text="无用户"
+        android:textStyle="bold"
+        android:textSize="10pt"
+        />
+
+    <Button
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:id="@+id/NA_pause_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/NA_pause"
-         
+        android:background="@drawable/button_background"
+        android:text="暂停"
+        android:textStyle="bold"
+        android:textSize="4pt"
+        android:textColor="@color/Color_Black"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="50dp"
+        android:layout_marginBottom="100dp"
         />
-        <Button
-        android:id="@+id/NA_stop_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/NA_stop"
-         
+
+    <Button
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/NA_finish_button"
+        android:background="@drawable/button_background"
+        android:text="完成"
+        android:textStyle="bold"
+        android:textSize="4pt"
+        android:textColor="@color/Color_Black"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="100dp"
         />
-        <Button
-        android:id="@+id/NA_choudian_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/NA_choudian"
-         
+
+    <Button
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/NA_ChouDian_button"
+        android:background="@drawable/button_background"
+        android:text="抽点"
+        android:textStyle="bold"
+        android:textSize="4pt"
+        android:textColor="@color/Color_Black"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="50dp"
+        android:layout_marginBottom="100dp"
         />
-        
-    
-    </LinearLayout>
-    
-</LinearLayout>
+
+
+
+</RelativeLayout>

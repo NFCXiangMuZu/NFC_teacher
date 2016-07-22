@@ -10,7 +10,7 @@
         android:id="@+id/reflect_infor_button"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:src="@drawable/wechat3"
+        android:src="@drawable/wechat4"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
         android:scaleType="fitXY"
@@ -23,10 +23,22 @@
         android:id="@+id/folderbutton"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:src="@drawable/folderbutton1"
+        android:src="@drawable/folderbutton2"
         android:layout_marginRight="20dp"
         android:layout_marginTop="20dp"
         android:scaleType="fitXY"
         android:background="@null"
+        />
+
+    <ImageButton
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:id="@+id/attendence_button"
+        android:src="@drawable/attendence_button"
+        android:background="@null"
+        android:layout_alignParentBottom="true"
+        android:scaleType="fitXY"
+        android:layout_marginBottom="120dp"
+        android:layout_centerHorizontal="true"
         />
 </RelativeLayout>

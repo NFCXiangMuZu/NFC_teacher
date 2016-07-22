@@ -56,6 +56,7 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 
 	ImageButton reflect_infor_button;
 	ImageButton folder_button;
+	ImageButton attendence_button;
 	public static final int RESULT_CODE = 1000;    //选择文件   请求码
 	public static final String SEND_FILE_NAME = "sendFileName";
 	private SlidingMenu menu;
@@ -77,24 +78,6 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 
 		init_layout();//初始化layout里面的控件
 
-        //自定义导航栏
-		/*
-		nb = (NavigationBar)findViewById(R.id.detailNavBar);
-		nb.setLeftBarButton();
-		nb.setRightBarButton();
-		nb.setBarTitle(getString(R.string.app_name));
-		NavigationBar.NavigationBarListener nbl = new NavigationBar.NavigationBarListener() {
-			@Override
-			public void OnNavigationButtonClick(int which) {
-				if (which == NavigationBar.NAVIGATION_BUTTON_LEFT) {
-					toggle();
-				} else {
-
-				}
-			}
-		};
-		nb.setNavigationBarListener(nbl);*/
-
 		//实现屏幕常亮
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -109,9 +92,11 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 		reflect_infor_button = (ImageButton)findViewById(R.id.reflect_infor_button);
 		folder_button = (ImageButton)findViewById(R.id.folderbutton);
 		reflect_infor_menu_title = (TextView)findViewById(R.id.reflect_infor_menu_title);
+		attendence_button = (ImageButton)findViewById(R.id.attendence_button);
 
 		reflect_infor_button.setOnClickListener(new listener());
 		folder_button.setOnClickListener(new listener());
+		attendence_button.setOnClickListener(new listener());
 
 
 	}
@@ -216,6 +201,12 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 			switch(arg0.getId()){
 				case R.id.reflect_infor_button:
 					toggle();
+					break;
+				case R.id.attendence_button:
+					Intent intent_attendence=new Intent();
+					intent_attendence.setClass(MainActivity.this,NormalAttendence.class );
+					MainActivity.this.startActivity(intent_attendence);
+					finish();
 					break;
 				case R.id.folderbutton:
 					//创建popupmenu对象

@@ -54,10 +54,12 @@ package com.example.compaq.nfc_teacher;
         import android.os.Message;
         import android.os.Parcelable;
         import android.text.format.DateFormat;
+        import android.text.style.IconMarginSpan;
         import android.view.View;
         import android.view.Window;
         import android.view.WindowManager;
         import android.widget.Button;
+        import android.widget.ImageButton;
         import android.widget.Switch;
         import android.widget.TextView;
         import android.widget.Toast;
@@ -85,76 +87,99 @@ public class NormalAttendence extends Activity
     protected static final int MESSAGE_SENT = 0;
     NfcAdapter nfcadapter;
     PendingIntent pendingintent;
-    TextView show_attendence;
-    Button NA_pause;
-    Button NA_stop;
-    Button NA_choudian;
-    //Button NA_FileChooser;
-    //Uri file_path;
+    ImageButton backTomain_button;
+    Button pause_button;
+    Button finish_button;
+    Button ChouDian_button;
+    Button User_icon_button;
 
     @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE); // 设置无标题
         setContentView(R.layout.normalattendence);
+
+        init_layout();//初始化layout
 
         NormalAttendence.this.startService(new Intent(NormalAttendence.this,SendFileService.class));
 
-        //获取控件
-        show_attendence=(TextView)findViewById(R.id.NA_showAttendence);
-        NA_pause=(Button)findViewById(R.id.NA_pause_button);
-        NA_stop=(Button)findViewById(R.id.NA_stop_button);
-        NA_choudian=(Button)findViewById(R.id.NA_choudian_button);
-        //NA_FileChooser=(Button)findViewById(R.id.NA_FileChooser);
-        NA_pause.setOnClickListener(new listener());
-        NA_stop.setOnClickListener(new listener());
-        NA_choudian.setOnClickListener(new listener());
-        //NA_FileChooser.setOnClickListener(new listener());
-        show_attendence.setText("开始签到!");
 
         nfcadapter=NfcAdapter.getDefaultAdapter(this);
-        pendingintent=PendingIntent.getActivity(this, 0,
-                new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
-        //android Beam功能使用 开始
-        //here a callback is generated
-        NdefMessage ndefmeg = null;
-        try {
-            ndefmeg = getNoteAsNdef();
-        } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        //nfcadapter.setNdefPushMessage(ndefmeg, this);
+        //判断设备NFC是否可用
+        if(nfcadapter==null){
+            Toast.makeText(this,"您的爱机不支持NFC",Toast.LENGTH_LONG).show();
+        }else{
 
-        if(StaticValue.MY_TABLE_NAME==null){
-            //弹出框定义
-            AlertDialog.Builder alertdialog=new AlertDialog.Builder(NormalAttendence.this);
-            alertdialog.setTitle("请选择点名班级");
-            alertdialog.setPositiveButton("确定",new DialogInterface.OnClickListener(){
+            if(!nfcadapter.isEnabled()){
+                Toast.makeText(this,"您的爱机还没开启NFC",Toast.LENGTH_LONG).show();
+            }else{
 
-                @Override
-                public void onClick(DialogInterface arg0, int arg1) {
-                    // TODO Auto-generated method stub
-                    final Vector<String> db_list_str_2=new Vector<String>();
-                    CreateNameList.select_namelist(getPackageName().toString(),
-                            NormalAttendence.this,db_list_str_2);
+                pendingintent=PendingIntent.getActivity(this, 0,
+                        new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+
+                //android Beam功能使用 开始
+                //here a callback is generated
+                NdefMessage ndefmeg = null;
+                try {
+                    ndefmeg = getNoteAsNdef();
+                } catch (UnsupportedEncodingException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                //nfcadapter.setNdefPushMessage(ndefmeg, this);
+
+                if(StaticValue.MY_TABLE_NAME==null){
+                    //弹出框定义
+                    AlertDialog.Builder alertdialog=new AlertDialog.Builder(NormalAttendence.this);
+                    alertdialog.setTitle("请选择点名班级");
+                    alertdialog.setPositiveButton("确定",new DialogInterface.OnClickListener(){
+
+                        @Override
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            // TODO Auto-generated method stub
+                            final Vector<String> db_list_str_2=new Vector<String>();
+                            CreateNameList.select_namelist(getPackageName().toString(),
+                                    NormalAttendence.this,db_list_str_2);
+                        }
+
+                    });
+                    alertdialog.setNegativeButton("取消", null);
+                    alertdialog.show();
                 }
 
-            });
-            alertdialog.setNegativeButton("取消", null);
-            alertdialog.show();
+                //注册接收发送成功信息的广播
+                IntentFilter intentfilter=new IntentFilter();
+                intentfilter.addAction(BluetoothTools.ACTION_FILE_SEND_SUCCESS);
+                registerReceiver(receiver, intentfilter);
+
+                //实现屏幕常亮
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+            }
+
         }
 
-        //注册接收发送成功信息的广播
-        IntentFilter intentfilter=new IntentFilter();
-        intentfilter.addAction(BluetoothTools.ACTION_FILE_SEND_SUCCESS);
-        registerReceiver(receiver, intentfilter);
 
-        //实现屏幕常亮
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+
+    }
+
+    public void init_layout(){
+
+        backTomain_button = (ImageButton)findViewById(R.id.NA_backToMain_button);
+        pause_button = (Button)findViewById(R.id.NA_pause_button);
+        finish_button = (Button)findViewById(R.id.NA_finish_button);
+        ChouDian_button = (Button)findViewById(R.id.NA_ChouDian_button);
+        User_icon_button = (Button)findViewById(R.id.NA_user_icon_button);
+
+        backTomain_button.setOnClickListener(new listener());
+        pause_button.setOnClickListener(new listener());
+        finish_button.setOnClickListener(new listener());
+        ChouDian_button.setOnClickListener(new listener());
+        User_icon_button.setOnClickListener(new listener());
 
     }
 
@@ -239,49 +264,12 @@ public class NormalAttendence extends Activity
         public void onClick(View arg0) {
             // TODO Auto-generated method stub
             switch(arg0.getId()){
-                case R.id.NA_pause_button:
-                    //Toast.makeText(NormalAttendence.this, "你点击了暂停按钮", Toast.LENGTH_LONG).show();
-                    break;
-                case R.id.NA_stop_button:
-                    //Toast.makeText(NormalAttendence.this, "你点击了停止按钮", Toast.LENGTH_LONG).show();
-                    Intent intent=new Intent();
-                    intent.setClass(NormalAttendence.this,MainActivity.class);
-                    NormalAttendence.this.startActivity(intent);
+                case R.id.NA_backToMain_button:
+                    Intent intent_backTomain=new Intent();
+                    intent_backTomain.setClass(NormalAttendence.this,MainActivity.class );
+                    NormalAttendence.this.startActivity(intent_backTomain);
                     finish();
                     break;
-                case R.id.NA_choudian_button:
-                    //Toast.makeText(NormalAttendence.this, "你点击了抽点按钮", Toast.LENGTH_LONG).show();
-                    break;
-                /*
-                case R.id.NA_FileChooser:
-                    System.out.println("======选择文件开始======");
-                    //弹出框定义
-                    AlertDialog.Builder alertdialog=new AlertDialog.Builder(NormalAttendence.this);
-                    alertdialog.setTitle("请选择要下发的文件");
-                    alertdialog.setPositiveButton("确定",new DialogInterface.OnClickListener(){
-
-                        @Override
-                        public void onClick(DialogInterface arg0, int arg1) {
-                            // TODO Auto-generated method stub
-                            Intent intent=new Intent(Intent.ACTION_GET_CONTENT);
-                            intent.setType("application/*");
-                            intent.addCategory(Intent.CATEGORY_OPENABLE);
-                            try{
-                                startActivityForResult(Intent.createChooser(intent, "请选择点名文件"),1);
-                            }catch(android.content.ActivityNotFoundException ex){
-                                Toast.makeText(getApplicationContext(), "请安装文件选择器", Toast.LENGTH_LONG).show();
-                            }
-                            catch (NullPointerException e) {
-                                // TODO: handle exception
-                                e.printStackTrace();
-                            }
-                        }
-
-                    });
-                    alertdialog.setNegativeButton("取消", null);
-                    alertdialog.show();
-                    break;
-                    */
             }
         }
     }
@@ -426,17 +414,8 @@ public class NormalAttendence extends Activity
 
                         SQLiteManager.updateData(StaticValue.MY_TABLE_NAME, result_strname,
                                 result_strxuehao, int_chuxi, int_quexi, int_qingjia, now);
-                        Toast.makeText(this, result_strname + " " +
-                                        result_strxuehao + "信息被修改" + "\n"
-                                        + "修改后的出席：" + int_chuxi
-                                        + "\n修改后的缺席：" + int_quexi
-                                        + "\n修改后的请假：" + int_qingjia
-                                        + "反馈信息为：" + result_strreflect_infor,
-                                Toast.LENGTH_LONG).show();
-                        show_attendence.setText(result_strname + "信息被修改" + "\n"
-                                + "修改后的出席：" + int_chuxi
-                                + "\n修改后的缺席：" + int_quexi
-                                + "\n修改后的请假：" + int_qingjia);
+                        Toast.makeText(this, result_strname + "信息被修改" , Toast.LENGTH_LONG).show();
+                        User_icon_button.setText(result_strname+"\n"+"已签到");
                     } else {
                         Toast.makeText(this, "已经重复签到啦！！！", Toast.LENGTH_LONG).show();
                         int_chuxi = result[0];
