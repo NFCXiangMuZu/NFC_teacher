@@ -19,9 +19,9 @@
     <string name="id">id</string>
     <string name="name">姓名</string>
     <string name="xuehao">学号</string>
-    <string name="chuxi">出席</string>
-    <string name="quexi">缺席</string>
-    <string name="qingjia">请假</string>
+    <string name="chuxi">出席 :</string>
+    <string name="quexi">缺席 :</string>
+    <string name="qingjia">请假 :</string>
     <string name="tip_empty_folder">Empty Folder</string>
     <string name="type_here">点此输入</string>
     <string name="chooseList_textview">数据库导入历史</string>

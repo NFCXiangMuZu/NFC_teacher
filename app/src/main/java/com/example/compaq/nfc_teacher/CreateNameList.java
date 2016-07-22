@@ -55,7 +55,6 @@ public class CreateNameList extends Activity{
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.set);
     }
 
     //导入Excel文件

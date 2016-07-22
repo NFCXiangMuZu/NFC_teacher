@@ -1,8 +1,8 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/Listview_Dialog_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
+    android:background="@color/Color_White"
     >
    
     
@@ -11,41 +11,72 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/chuxi"
-        android:textSize="15pt"
+        android:textSize="13pt"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:textStyle="bold"
+        android:textColor="#30b2ea"
         />
     <EditText 
         android:id="@+id/LDL_EditText_chuxi"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:maxLines="6"
+        android:layout_toRightOf="@id/LDL_textview_chuxi"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        android:maxLines="2"
         android:inputType="number"
+        android:textColor="#30b2ea"
+        android:textSize="10pt"
         />
     <TextView 
         android:id="@+id/LDL_textview_quexi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/quexi"
-        android:textSize="15pt"
+        android:textSize="13pt"
+        android:layout_marginLeft="20dp"
+        android:textStyle="bold"
+        android:textColor="#30b2ea"
+        android:layout_below="@id/LDL_textview_chuxi"
+        android:layout_marginTop="10dp"
+
         />
     <EditText 
         android:id="@+id/LDL_EditText_quexi"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:maxLines="6"
+        android:layout_toRightOf="@id/LDL_textview_quexi"
+        android:layout_below="@id/LDL_EditText_chuxi"
+        android:layout_marginTop="2dp"
+        android:maxLines="2"
         android:inputType="number"
+        android:textColor="#30b2ea"
+        android:textSize="10pt"
         />
     <TextView 
         android:id="@+id/LDL_textview_qingjia"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/qingjia"
-        android:textSize="15pt"
+        android:textSize="13pt"
+        android:layout_marginLeft="20dp"
+        android:textStyle="bold"
+        android:textColor="#30b2ea"
+        android:layout_below="@id/LDL_textview_quexi"
+        android:layout_marginTop="10dp"
         />
     <EditText 
         android:id="@+id/LDL_EditText_qingjia"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:maxLines="6"
+        android:layout_toRightOf="@id/LDL_textview_qingjia"
+        android:layout_below="@id/LDL_EditText_quexi"
+        android:layout_marginTop="3dp"
+        android:maxLines="2"
         android:inputType="number"
+        android:textColor="#30b2ea"
+        android:textSize="10pt"
         />
-</LinearLayout>
+</RelativeLayout>
