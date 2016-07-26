@@ -395,7 +395,7 @@ public class NormalAttendence extends Activity
                         c2.setTime(date2);
                         long l1 = c1.getTimeInMillis();
                         long l2 = c2.getTimeInMillis();
-                        hours = (l2 - l1) / (3600000);
+                        hours = Math.abs((l2 - l1) / (3600000));
                         //System.out.println("时间间隔为："+l2+"-"+l1+"="+hours);
                         //System.out.println("===数据库中的日期是："+date);
                         //System.out.println("====现在的日期是："+date2);
