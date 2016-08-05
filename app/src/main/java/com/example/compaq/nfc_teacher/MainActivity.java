@@ -172,27 +172,6 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 	}
 
 
-	/*
-
-	@Override
-
-	public void onBackPressed() {
-
-		//点击返回键关闭滑动菜单
-
-		if (menu.isMenuShowing()) {
-
-			menu.showContent();
-
-		} else {
-
-			super.onBackPressed();
-
-		}
-
-	}*/
-
-
 	class listener implements View.OnClickListener{
 
 		@Override
@@ -258,7 +237,6 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 									alertdialog.show();
 									break;
 								case R.id.choose_namelist_item:
-									if(StaticValue.MY_TABLE_NAME==null){
 										//获取listview对象
 										final ListView CL_listview;
 
@@ -325,9 +303,6 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 										choose_namelist_alertdialog.setTitle("请从新建记录选择点名班级");
 										choose_namelist_alertdialog.setNegativeButton("返回", null);
 										choose_namelist_alertdialog.show();
-									}else{
-										Toast.makeText(MainActivity.this,"您已经选择点名班级",Toast.LENGTH_LONG).show();
-									}
 									break;
 								case R.id.choose_file_item:
 									System.out.println("======选择文件开始======");
@@ -405,49 +380,6 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 	}
 
 
-
-	/*
-	//设置按钮的监听器
-	class MyButtonListener implements View.OnClickListener{
-		public void onClick(View v){
-			Intent intent=new Intent();
-			intent.setClass(MainActivity.this,CreateNameList.class );
-			MainActivity.this.startActivity(intent);
-			finish();
-		}
-
-	}
-
-	//listview显示按钮的监听器
-	class ListView_ButtonListener implements View.OnClickListener{
-			public void onClick(View v){
-				Intent intent=new Intent();
-				intent.setClass(MainActivity.this,ListViewDB.class );
-				MainActivity.this.startActivity(intent);
-				finish();
-			}
-
-		}
-
-	//NormalAttendence_button的监听器
-	class NormalAttendence_ButtonListener implements View.OnClickListener{
-		public void onClick(View v){
-			Intent intent=new Intent();
-			intent.setClass(MainActivity.this,NormalAttendence.class );
-			MainActivity.this.startActivity(intent);
-			finish();
-		}
-
-	}
-
-	class OpenNFC_Listener implements View.OnClickListener{
-		public void onClick(View v){
-			new OpenNFC(MainActivity.this);
-		}
-
-	}
-	*/
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// TODO Auto-generated method stub
@@ -478,40 +410,6 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 		alertdialog_long.show();
 		return super.onKeyDown(keyCode, event);
 	}
-
-
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// TODO Auto-generated method stub
-		if(item.getItemId()==1){
-			finish();
-		}
-		switch(item.getItemId()){
-			case 1:
-				finish();
-				break;
-			case 2:
-				Toast.makeText(getApplicationContext(), "我们棒棒哒！", Toast.LENGTH_LONG).show();
-				break;
-			case R.id.action_refresh:
-				Toast.makeText(this, "Refresh selected", Toast.LENGTH_SHORT)
-						.show();
-				break;
-			// action with ID action_settings was selected
-			case R.id.action_settings:
-				toggle();
-				//showSecondaryMenu();
-				Toast.makeText(this, "Settings selected", Toast.LENGTH_LONG)
-						.show();
-				break;
-			default:
-				break;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-
 
 	public IBinder onBind(Intent arg0) {
 		// TODO Auto-generated method stub

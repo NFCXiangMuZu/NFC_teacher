@@ -11,7 +11,9 @@ import java.io.IOException;
 import java.nio.channels.WritableByteChannel;
 import java.sql.Connection;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
@@ -84,7 +86,11 @@ public class CreateNameList extends Activity{
         //NameListS ervice namelist= new NameListService(this);
         //NameListDbHelper myhelper=namelist.getdbhelper();
         helper.clearall(StaticValue.MY_TABLE_NAME);
-        Timestamp now = new Timestamp(System.currentTimeMillis());//获取系统当前时间
+        //自定义数据插入时间
+        SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        java.util.Date date11 = df1.parse("2000-1-1 00:00:00.0");
+        String time  = df1.format(date11);
+        Timestamp now = Timestamp.valueOf(time);
         for(int i=2;i<row_num;i++){
             helper.insertData(StaticValue.MY_TABLE_NAME,
                     sheet.getCell(2, i).getContents(),

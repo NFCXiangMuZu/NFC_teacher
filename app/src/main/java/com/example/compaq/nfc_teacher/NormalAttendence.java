@@ -26,6 +26,7 @@ package com.example.compaq.nfc_teacher;
         import android.app.Activity;
         import android.app.AlertDialog;
         import android.app.PendingIntent;
+        import android.app.ProgressDialog;
         import android.bluetooth.BluetoothAdapter;
         import android.bluetooth.BluetoothDevice;
         import android.bluetooth.BluetoothSocket;
@@ -67,22 +68,9 @@ package com.example.compaq.nfc_teacher;
 @SuppressLint("NewApi")
 public class NormalAttendence extends Activity
         implements OnNdefPushCompleteCallback{
-
-    public static final int RESULT_CODE = 1000;    //选择文件   请求码
-    public static final String SEND_FILE_NAME = "sendFileName";
-    int sign=0;
-    BluetoothCommunSocket communsocket;
-    Thread sendthread;
-    Handler handler;
     public String result_macaddress;
-    BluetoothSocket mySocket;
-    BluetoothDevice mydevice;
     BluetoothDevice bluetoothDevice;
-    BluetoothSocket bluetoothSocket;
     BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-    private final UUID MY_UUID = UUID.fromString("db764ac8-4b08-7f25-aafe-59d03c27bae3");
-    private OutputStream os;
-    private final String NAME = "Bluetooth_Socket";
 
     protected static final int MESSAGE_SENT = 0;
     NfcAdapter nfcadapter;
@@ -92,6 +80,14 @@ public class NormalAttendence extends Activity
     Button finish_button;
     Button ChouDian_button;
     Button User_icon_button;
+
+    //进度条对话框
+    ProgressDialog file_send_dialog;
+
+    //签到学生信息
+    String result_strname;
+    String result_strxuehao;
+    String result_strreflect_infor;
 
     @SuppressLint("NewApi")
     @Override
@@ -153,6 +149,7 @@ public class NormalAttendence extends Activity
                 //注册接收发送成功信息的广播
                 IntentFilter intentfilter=new IntentFilter();
                 intentfilter.addAction(BluetoothTools.ACTION_FILE_SEND_SUCCESS);
+                intentfilter.addAction(BluetoothTools.ACTION_FILE_SEND_PERCENT);
                 registerReceiver(receiver, intentfilter);
 
                 //实现屏幕常亮
@@ -366,9 +363,9 @@ public class NormalAttendence extends Activity
 
                 for (int i = 0; i < msg.getRecords().length; i += 4) {
                     result_macaddress = new String(msg.getRecords()[i].getPayload(), "GBK").substring(1);
-                    String result_strname = new String(msg.getRecords()[i + 1].getPayload(), "UTF-8");
-                    String result_strxuehao = new String(msg.getRecords()[i + 2].getPayload(), "UTF-8").substring(1, 11);
-                    String result_strreflect_infor = new String(msg.getRecords()[i + 3].getPayload(), "UTF-8");
+                    result_strname = new String(msg.getRecords()[i + 1].getPayload(), "UTF-8");
+                    result_strxuehao = new String(msg.getRecords()[i + 2].getPayload(), "UTF-8").substring(1, 11);
+                    result_strreflect_infor = new String(msg.getRecords()[i + 3].getPayload(), "UTF-8");
                     StaticValue.reflect_information.add(result_strreflect_infor);
                     FileHelper.writeSDFile(result_strreflect_infor, StaticValue.MY_TABLE_NAME + ".txt");
                     //Toast.makeText(this, result_strname+result_strxuehao, Toast.LENGTH_LONG).show();
@@ -453,6 +450,12 @@ public class NormalAttendence extends Activity
                         Thread thead = new sendThread();
                         thead.start();
                         System.out.println("连接线程启动成功！！");
+                        //进度条对话框显示
+                        file_send_dialog = new ProgressDialog(NormalAttendence.this);
+                        file_send_dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                        file_send_dialog.setTitle("文件发送中");
+                        file_send_dialog.setCancelable(true);
+                        file_send_dialog.show();
                     } else {
                         System.out.println("无文件可发！！");
                     }
@@ -562,6 +565,7 @@ public class NormalAttendence extends Activity
             TransmitBean transmit = new TransmitBean();
             String path=StaticValue.select_filename;
             String filename=path.substring(path.lastIndexOf("/")+1,path.length());
+            StaticValue.send_filename = filename;
             transmit.setFilename(filename);
             transmit.setFilepath(path);
             Intent sendDataIntent = new Intent(BluetoothTools.ACTION_DATA_TO_SERVICE);
@@ -569,8 +573,9 @@ public class NormalAttendence extends Activity
             sendBroadcast(sendDataIntent);
 
             System.out.println("广播成功！！！！");
-            //Toast.makeText(Bluetooth_Text.this, buffer.toString(), Toast.LENGTH_LONG).show();
-            //showtext.setText(buffer.toString());
+
+
+
         }
     }
 
@@ -584,7 +589,18 @@ public class NormalAttendence extends Activity
             System.out.println("文件传输成功！！");
             String action = arg1.getAction();
             if (BluetoothTools.ACTION_FILE_SEND_SUCCESS.equals(action)) {
+                file_send_dialog.cancel();
                 Toast.makeText(NormalAttendence.this, "文件发送成功了！！！", Toast.LENGTH_LONG).show();
+                //Toast.makeText(NormalAttendence.this,"发送时间为："+StaticValue.file_send_time,Toast.LENGTH_LONG).show();
+                System.out.println("发送时间为："+StaticValue.file_send_time);
+            }else if(BluetoothTools.ACTION_FILE_SEND_PERCENT.equals(action)){
+
+                System.out.println("文件总长度为："+StaticValue.file_send_length+"MB");
+                file_send_dialog.setMax(StaticValue.file_send_length);
+                file_send_dialog.setProgress(StaticValue.file_send_percent);
+                System.out.println("已传输文件长度为："+StaticValue.file_send_percent+"MB");
+
+
             }
 
         }
