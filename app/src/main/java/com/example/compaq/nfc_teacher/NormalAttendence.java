@@ -1,26 +1,13 @@
 package com.example.compaq.nfc_teacher;
 
-        import java.io.IOException;
-
-        import java.io.OutputStream;
-
         import java.io.UnsupportedEncodingException;
-        import java.nio.charset.Charset;
-        import java.sql.Date;
-        import java.sql.NClob;
         import java.sql.Timestamp;
         import java.text.ParseException;
         import java.text.SimpleDateFormat;
         import java.util.Arrays;
         import java.util.Calendar;
-        import java.util.UUID;
         import java.util.Vector;
 
-        import com.example.compaq.nfc_teacher.BluetoothTools;
-        import com.example.compaq.nfc_teacher.FileSend;
-        import com.example.compaq.nfc_teacher.SendFileService;
-        import com.example.compaq.nfc_teacher.TransmitBean;
-        import com.example.compaq.nfc_teacher.FileSend.connectThread;
         import android.annotation.SuppressLint;
         import android.annotation.TargetApi;
         import android.app.Activity;
@@ -29,40 +16,27 @@ package com.example.compaq.nfc_teacher;
         import android.app.ProgressDialog;
         import android.bluetooth.BluetoothAdapter;
         import android.bluetooth.BluetoothDevice;
-        import android.bluetooth.BluetoothSocket;
         import android.content.BroadcastReceiver;
         import android.content.Context;
         import android.content.DialogInterface;
         import android.content.IntentFilter;
-        import android.content.DialogInterface.OnClickListener;
         import android.content.Intent;
-        import android.net.Uri;
         import android.nfc.FormatException;
         import android.nfc.NdefMessage;
         import android.nfc.NdefRecord;
         import android.nfc.NfcAdapter;
-        import android.nfc.NfcAdapter.CreateBeamUrisCallback;
         import android.nfc.NfcAdapter.OnNdefPushCompleteCallback;
         import android.nfc.NfcEvent;
-        import android.nfc.NfcAdapter.CreateNdefMessageCallback;
-        import android.nfc.Tag;
-        import android.nfc.tech.MifareUltralight;
-        import android.nfc.tech.Ndef;
-        import android.nfc.tech.NdefFormatable;
         import android.os.Build;
         import android.os.Bundle;
         import android.os.Handler;
         import android.os.Message;
         import android.os.Parcelable;
-        import android.text.format.DateFormat;
-        import android.text.style.IconMarginSpan;
         import android.view.View;
         import android.view.Window;
         import android.view.WindowManager;
         import android.widget.Button;
         import android.widget.ImageButton;
-        import android.widget.Switch;
-        import android.widget.TextView;
         import android.widget.Toast;
 
 @SuppressLint("NewApi")
@@ -265,6 +239,12 @@ public class NormalAttendence extends Activity
                     Intent intent_backTomain=new Intent();
                     intent_backTomain.setClass(NormalAttendence.this,MainActivity.class );
                     NormalAttendence.this.startActivity(intent_backTomain);
+                    finish();
+                    break;
+                case R.id.NA_ChouDian_button:
+                    Intent intent_test_sensor=new Intent();
+                    intent_test_sensor.setClass(NormalAttendence.this,ChouDianActivity.class );
+                    NormalAttendence.this.startActivity(intent_test_sensor);
                     finish();
                     break;
             }

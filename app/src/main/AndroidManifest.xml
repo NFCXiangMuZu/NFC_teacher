@@ -6,6 +6,7 @@
     android:versionName="1.0"
 
     >
+    <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.ACCESS_BLUETOOTH_SHARE" />
     <uses-permission android:name="android.permission.NFC" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -43,6 +44,13 @@
         <activity
             android:name="com.example.compaq.nfc_teacher.ListViewDB"
             android:label="@string/name_ListViewDB"
+            >
+
+        </activity>
+
+        <activity
+            android:name=".ChouDianActivity"
+            android:label="测试重力感应"
             >
 
         </activity>
