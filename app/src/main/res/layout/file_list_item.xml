@@ -4,13 +4,24 @@
     android:layout_height="fill_parent"
     android:orientation="horizontal"
     android:padding="3dp" >
-    <ImageView 
-        android:id="@+id/fileImageView" 
+
+	<CheckBox
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:id="@+id/file_select_checkbox"
+		android:focusable="false"
+		/>
+
+    <ImageView
+        android:id="@+id/fileImageView"
 	    android:layout_width="40dp"
 	    android:layout_height="40dp"
 	    android:layout_marginLeft="5dp"
 	    android:scaleType="centerInside"
 	    android:src="@drawable/ic_launcher"/>
+
+
+
 	<TextView
 	    android:id="@+id/fileNameTV" 
 	    android:layout_width="wrap_content"
@@ -19,4 +30,6 @@
 	    android:textColor="#FFFFFF"
 	    android:textSize="20dp"
 	    android:text="空"/>
+
+
 </LinearLayout>

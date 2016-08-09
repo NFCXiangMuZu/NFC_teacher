@@ -1,39 +1,21 @@
 package com.example.compaq.nfc_teacher;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Vector;
 
-import com.example.compaq.nfc_teacher.BluetoothTools;
-import com.example.compaq.nfc_teacher.TransmitBean;
-import com.example.compaq.nfc_teacher.FileSend;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 
-import android.app.ActionBar;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Service;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteQueryBuilder;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,13 +26,14 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.PopupMenu;
-import android.widget.Switch;
+import android.widget.PopupWindow;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.support.v4.app.FragmentActivity;
 
 public class MainActivity extends SlidingFragmentActivity  implements View.OnClickListener{
 
@@ -61,9 +44,26 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 	public static final String SEND_FILE_NAME = "sendFileName";
 	private SlidingMenu menu;
 	private Fragment mContent;
-	NavigationBar nb;
 	PopupMenu folder_menu=null;
 	TextView reflect_infor_menu_title;
+
+	//文件格式选择窗口
+	PopupWindow file_choose_window = null;
+	Button file_choose_window_close_button;
+	Button file_choose_window_text_button;
+	Button file_choose_window_ZIP_button;
+	Button file_choose_window_music_button;
+	Button file_choose_window_video_button;
+
+	//文件列举窗口
+	PopupWindow file_list_window = null;
+	TextView file_list_window_title;
+	Button file_list_window_close_button;
+	ListView file_list_window_listview;
+	Button file_list_window_left_button;
+
+	View contentView = null;
+
 
 
 	@SuppressWarnings("deprecation")
@@ -74,6 +74,9 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 		setContentView(R.layout.activity_main);
 		setBehindContentView(R.layout.sliding_manu);
 
+		FileHelper.mkDir(StaticValue.SDPATH+"/NFC—课堂点名/");//创建新文件夹
+
+
 		initSlidingMenu(savedInstanceState);//初始化侧滑菜单
 
 		init_layout();//初始化layout里面的控件
@@ -83,6 +86,8 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 
 
 	}
+
+
 
 	/**
 	 * 初始化layout资源
@@ -172,12 +177,126 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 	}
 
 
+	/**
+	 * 显示文件格式选择窗口
+	****/
+
+	private void show_file_choose_window(){
+
+		contentView = LayoutInflater.from(MainActivity.this).inflate(R.layout.file_choose_window_layout, null);
+		//sign_in_window = new PopupWindow(contentView, RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+		file_choose_window = new PopupWindow(contentView,600, 700);
+		file_choose_window.setFocusable(true);
+
+		//初始化layout
+		file_choose_window_close_button = (Button)contentView.findViewById(R.id.file_choose_window_close_button);
+		file_choose_window_text_button = (Button)contentView.findViewById(R.id.file_choose_window_text_button);
+		file_choose_window_ZIP_button = (Button)contentView.findViewById(R.id.file_choose_window_ZIP_button);
+		file_choose_window_music_button = (Button)contentView.findViewById(R.id.file_choose_window_music_button);
+		file_choose_window_video_button = (Button)contentView.findViewById(R.id.file_choose_window_video_button);
+
+		file_choose_window_close_button.setOnClickListener(new listener());
+		file_choose_window_text_button.setOnClickListener(new listener());
+		file_choose_window_ZIP_button.setOnClickListener(new listener());
+		file_choose_window_music_button.setOnClickListener(new listener());
+		file_choose_window_video_button.setOnClickListener(new listener());
+
+		//显示PopupWindow
+		View rootview = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_main, null);
+		file_choose_window.showAtLocation(rootview, Gravity.CENTER, 0, 0);
+
+	}
+
+	private void show_file_list_window(String[] file_type){
+
+		file_choose_window.dismiss();
+
+		ArrayList<HashMap<String, Object>> file_list_window_listitem = new ArrayList<HashMap<String, Object>>();
+		contentView = LayoutInflater.from(MainActivity.this).inflate(R.layout.file_list_window_layout, null);
+		file_list_window = new PopupWindow(contentView,600, 700);
+		file_list_window.setFocusable(true);
+
+		//初始化layout
+		file_list_window_close_button = (Button)contentView.findViewById(R.id.file_list_window_close_button);
+		file_list_window_left_button = (Button)contentView.findViewById(R.id.file_list_window_left_button);
+		file_list_window_title = (TextView)contentView.findViewById(R.id.file_list_window_title);
+		file_list_window_listview = (ListView)contentView.findViewById(R.id.file_list_window_listview);
+
+		file_list_window_close_button.setOnClickListener(new listener());
+		file_list_window_left_button.setOnClickListener(new listener());
+
+		//获取文件列表
+		List<String> file_list = new ArrayList<>();
+		file_list = FileHelper.getSpecificTypeOfFile(MainActivity.this,file_type);
+		if(file_list!=null){
+
+
+			System.out.println("file_list_length = "+file_list.size());
+			String filename;
+			for(int i=0;i<file_list.size();i++) {
+				HashMap<String, Object> map = new HashMap<String, Object>();
+				filename = file_list.get(i).substring(file_list.get(i).lastIndexOf("/")+1,file_list.get(i).length());
+				System.out.println("filename = "+filename);
+				map.put("file_list_window_listview_item_text", filename);
+				file_list_window_listitem.add(map);
+
+			}
+            /*
+			SimpleAdapter listitemadapter = new SimpleAdapter(MainActivity.this,
+					file_list_window_listitem,
+					R.layout.file_list_window_listview_item,
+					new String[]{"file_list_window_listview_item_text"},
+					new int[]{R.id.file_list_window_listview_item_text}
+			);
+			file_list_window_listview.setAdapter(listitemadapter);
+			*/
+			FileAdapter file_list_window_adapter = new FileAdapter(MainActivity.this,file_list,R.layout.file_list_window_listview_item);
+			file_list_window_listview.setAdapter(file_list_window_adapter);
+
+
+
+		}else{
+			Toast.makeText(MainActivity.this,"查询文件失败",Toast.LENGTH_SHORT).show();
+		}
+
+
+
+		//显示PopupWindow
+		View rootview = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_main, null);
+		file_list_window.showAtLocation(rootview, Gravity.CENTER, 0, 0);
+
+	}
+
 	class listener implements View.OnClickListener{
 
 		@Override
 		public void onClick(View arg0) {
 			// TODO Auto-generated method stub
 			switch(arg0.getId()){
+				case R.id.file_choose_window_text_button:
+					show_file_list_window(new String[]{".doc",".ppt",".pdf",".xls",".txt",".docx",".pptx",".xlsx"});
+                    //Toast.makeText(MainActivity.this,"文档",Toast.LENGTH_SHORT).show();
+					break;
+				case R.id.file_choose_window_ZIP_button:
+					show_file_list_window(new String[]{".rar",".zip",".7z"});
+					//Toast.makeText(MainActivity.this,"压缩包",Toast.LENGTH_SHORT).show();
+					break;
+				case R.id.file_choose_window_music_button:
+					Toast.makeText(MainActivity.this,"音频",Toast.LENGTH_SHORT).show();
+					break;
+				case R.id.file_choose_window_video_button:
+					Toast.makeText(MainActivity.this,"视频",Toast.LENGTH_SHORT).show();
+					break;
+				case R.id.file_choose_window_close_button:
+					file_choose_window.dismiss();
+					break;
+				case R.id.file_list_window_close_button:
+					file_list_window.dismiss();
+					break;
+				case R.id.file_list_window_left_button:
+					file_list_window.dismiss();
+					show_file_choose_window();
+					break;
 				case R.id.reflect_infor_button:
 					toggle();
 					break;
@@ -307,6 +426,8 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 								case R.id.choose_file_item:
 									System.out.println("======选择文件开始======");
 									//弹出框定义
+									show_file_choose_window();
+									/*
 									AlertDialog.Builder choose_file_alertdialog=new AlertDialog.Builder(MainActivity.this);
 									choose_file_alertdialog.setTitle("请选择要下发的文件");
 									choose_file_alertdialog.setPositiveButton("确定",new DialogInterface.OnClickListener(){
@@ -316,8 +437,8 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 											// TODO Auto-generated method stub
 											try{
 												//startActivityForResult(Intent.createChooser(intent, "请选择点名文件"),1);
-												Intent intent_selectfile = new Intent(MainActivity.this, com.example.compaq.nfc_teacher.SelectFileActivity.class);
-												startActivityForResult(intent_selectfile, com.example.compaq.nfc_teacher.SelectFileActivity.RESULT_CODE);
+												//Intent intent_selectfile = new Intent(MainActivity.this, com.example.compaq.nfc_teacher.SelectFileActivity.class);
+												//startActivityForResult(intent_selectfile, com.example.compaq.nfc_teacher.SelectFileActivity.RESULT_CODE);
 											}catch(android.content.ActivityNotFoundException ex){
 												Toast.makeText(getApplicationContext(), "请安装文件选择器", Toast.LENGTH_LONG).show();
 											}
@@ -330,6 +451,7 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 									});
 									choose_file_alertdialog.setNegativeButton("取消", null);
 									choose_file_alertdialog.show();
+									*/
 									break;
 								default:
 									break;
@@ -342,6 +464,9 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 					});
 
 					folder_menu.show();
+
+					default:
+						break;
 			}
 		}
 

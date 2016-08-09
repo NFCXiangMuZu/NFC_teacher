@@ -17,11 +17,23 @@ import java.io.FileWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
+import android.provider.MediaStore.Files;
+import android.util.Log;
+
+import static android.provider.MediaStore.Files.*;
+import static android.provider.MediaStore.Files.FileColumns.*;
+
 public class FileHelper {
 	private Context context;
 	/** SD卡是否存在**/
@@ -142,6 +154,89 @@ public class FileHelper {
 
 		return list;
 	}
+
+	public static boolean mkDir(String path) {
+		File dir = new File(path);
+		boolean res = dir.mkdirs();
+
+		return res;
+	}
+
+	public static boolean CopyAssetFile(Context ctx, String fromFile, String toFile) {
+		try {
+			InputStream fosfrom = ctx.getAssets().open(fromFile);
+			OutputStream fosto = new FileOutputStream(toFile);
+			byte bt[] = new byte[4096];
+			int c;
+			while ((c = fosfrom.read(bt)) > 0) {
+				fosto.write(bt, 0, c);
+			}
+			fosfrom.close();
+			fosto.close();
+			bt = null;
+			return true;
+
+		} catch (Exception ex) {
+			return false;
+		}
+	}
+
+	public static boolean deleteFile(String path) {
+		try {
+			File file = new File(path);
+			return file.delete();
+		} catch (Exception ex) {
+			return false;
+		}
+	}
+
+	/**
+	 * 获取特定格式文件
+	 * @return
+     */
+	public static List<String> getSpecificTypeOfFile(Context context,String[] extension)
+	{
+
+		List<String> file_list = new ArrayList<>();
+		//从外存中获取
+		Uri fileUri= getContentUri("external");
+		//筛选列，这里只筛选了：文件路径和不含后缀的文件名
+		String[] projection=new String[]{
+				FileColumns.DATA, FileColumns.TITLE
+		};
+		//构造筛选语句
+		String selection="";
+		for(int i=0;i<extension.length;i++)
+		{
+			if(i!=0)
+			{
+				selection=selection+" OR ";
+			}
+			selection=selection+ FileColumns.DATA+" LIKE '%"+extension[i]+"'";
+		}
+		//按时间递增顺序对结果进行排序;待会从后往前移动游标就可实现时间递减
+		String sortOrder= FileColumns.DATE_MODIFIED;
+		//获取内容解析器对象
+		ContentResolver resolver=context.getContentResolver();
+		//获取游标
+		Cursor cursor=resolver.query(fileUri, projection, selection, null, sortOrder);
+		if(cursor==null)
+			return null;
+		//游标从最后开始往前递减，以此实现时间递减顺序（最近访问的文件，优先显示）
+		if(cursor.moveToLast())
+		{
+			do{
+				//输出文件的完整路径
+				String data=cursor.getString(0);
+				file_list.add(data);
+				Log.d("tag", data);
+			}while(cursor.moveToPrevious());
+		}
+		cursor.close();
+		return file_list;
+
+	}
+
 
 
 	public String getFILESPATH() {

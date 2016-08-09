@@ -77,13 +77,6 @@
         </activity>
 
         <activity
-            android:name="com.example.compaq.nfc_teacher.FileSend"
-            android:label="文件发送"
-            >
-
-        </activity>
-
-        <activity
             android:name="com.example.compaq.nfc_teacher.SelectFileActivity"
             android:label="选择文件"
             >

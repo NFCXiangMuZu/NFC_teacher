@@ -36,7 +36,7 @@ public class AdapterManager {
 		Log.v("调试" , "getFileListAdapter");
 		if(null == mFileListAdapter){
 			mFileList = new ArrayList<File>();
-			mFileListAdapter = new FileAdapter(mContext, mFileList, R.layout.file_list_item);
+			//mFileListAdapter = new FileAdapter(mContext, mFileList, R.layout.file_list_item);
 		}
 		System.out.print("222222222222222");
 		return mFileListAdapter;
