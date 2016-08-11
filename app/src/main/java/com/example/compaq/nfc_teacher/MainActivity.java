@@ -1,7 +1,13 @@
 package com.example.compaq.nfc_teacher;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
@@ -35,6 +41,8 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.tools.ant.Main;
+
 public class MainActivity extends SlidingFragmentActivity  implements View.OnClickListener{
 
 	ImageButton reflect_infor_button;
@@ -61,6 +69,8 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 	Button file_list_window_close_button;
 	ListView file_list_window_listview;
 	Button file_list_window_left_button;
+	Button file_list_window_confirm_button;
+	List<String> file_list = new ArrayList<>();
 
 	View contentView = null;
 
@@ -74,7 +84,12 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 		setContentView(R.layout.activity_main);
 		setBehindContentView(R.layout.sliding_manu);
 
+		if(StaticValue.select_filename==null){//判断是否选择发送文件
+			Toast.makeText(MainActivity.this,"请选择下发文件",Toast.LENGTH_SHORT).show();
+		}
+
 		FileHelper.mkDir(StaticValue.SDPATH+"/NFC—课堂点名/");//创建新文件夹
+		FileHelper.mkDir(StaticValue.SDPATH+"/NFC—课堂点名/待发送文件/");//创建新文件夹
 
 
 		initSlidingMenu(savedInstanceState);//初始化侧滑菜单
@@ -219,45 +234,25 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 		//初始化layout
 		file_list_window_close_button = (Button)contentView.findViewById(R.id.file_list_window_close_button);
 		file_list_window_left_button = (Button)contentView.findViewById(R.id.file_list_window_left_button);
+		file_list_window_confirm_button = (Button)contentView.findViewById(R.id.file_list_window_confirm_button);
 		file_list_window_title = (TextView)contentView.findViewById(R.id.file_list_window_title);
 		file_list_window_listview = (ListView)contentView.findViewById(R.id.file_list_window_listview);
 
+
 		file_list_window_close_button.setOnClickListener(new listener());
 		file_list_window_left_button.setOnClickListener(new listener());
+		file_list_window_confirm_button.setOnClickListener(new listener());
 
 		//获取文件列表
-		List<String> file_list = new ArrayList<>();
 		file_list = FileHelper.getSpecificTypeOfFile(MainActivity.this,file_type);
 		if(file_list!=null){
-
-
-			System.out.println("file_list_length = "+file_list.size());
-			String filename;
-			for(int i=0;i<file_list.size();i++) {
-				HashMap<String, Object> map = new HashMap<String, Object>();
-				filename = file_list.get(i).substring(file_list.get(i).lastIndexOf("/")+1,file_list.get(i).length());
-				System.out.println("filename = "+filename);
-				map.put("file_list_window_listview_item_text", filename);
-				file_list_window_listitem.add(map);
-
-			}
-            /*
-			SimpleAdapter listitemadapter = new SimpleAdapter(MainActivity.this,
-					file_list_window_listitem,
-					R.layout.file_list_window_listview_item,
-					new String[]{"file_list_window_listview_item_text"},
-					new int[]{R.id.file_list_window_listview_item_text}
-			);
-			file_list_window_listview.setAdapter(listitemadapter);
-			*/
 			FileAdapter file_list_window_adapter = new FileAdapter(MainActivity.this,file_list,R.layout.file_list_window_listview_item);
 			file_list_window_listview.setAdapter(file_list_window_adapter);
-
-
 
 		}else{
 			Toast.makeText(MainActivity.this,"查询文件失败",Toast.LENGTH_SHORT).show();
 		}
+
 
 
 
@@ -282,10 +277,12 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 					//Toast.makeText(MainActivity.this,"压缩包",Toast.LENGTH_SHORT).show();
 					break;
 				case R.id.file_choose_window_music_button:
-					Toast.makeText(MainActivity.this,"音频",Toast.LENGTH_SHORT).show();
+					show_file_list_window(new String[]{".mp3",".wav",".cda",".wma",".ra",".midi",".ogg",".ape",".flac",".aac"});
+					//Toast.makeText(MainActivity.this,"音频",Toast.LENGTH_SHORT).show();
 					break;
 				case R.id.file_choose_window_video_button:
-					Toast.makeText(MainActivity.this,"视频",Toast.LENGTH_SHORT).show();
+					show_file_list_window(new String[]{".mp4",".rmvb",".mkv",".avi",".rm",".mov",".asf",".wmv",".3gp",".dvd"});
+					//Toast.makeText(MainActivity.this,"视频",Toast.LENGTH_SHORT).show();
 					break;
 				case R.id.file_choose_window_close_button:
 					file_choose_window.dismiss();
@@ -296,6 +293,61 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 				case R.id.file_list_window_left_button:
 					file_list_window.dismiss();
 					show_file_choose_window();
+					break;
+				case R.id.file_list_window_confirm_button:
+
+					String save_send_file_path = null;//压缩文件存储位置
+
+					//获取Listview点击状态
+					HashMap<Integer, Boolean> status_map = FileAdapter.getIsSelected();
+					Timestamp now = new Timestamp(System.currentTimeMillis());//获取系统当前时间
+					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");//定义格式，不显示毫秒
+					String str = df.format(now);
+					System.out.println(StaticValue.SDPATH+"/NFC—课堂点名/待发送文件/"+str+"/");
+
+					if(FileHelper.mkDir(StaticValue.SDPATH+"/NFC—课堂点名/待发送文件/"+str+"/"))//创建新文件夹
+					{
+						System.out.println("文件创建成功");
+
+						List<String> send_file_list = new ArrayList<>();//存储要发送的文件路径
+
+						for(Map.Entry<Integer, Boolean> entry : status_map.entrySet()){
+							if(entry.getValue()==true){
+								//System.out.println(entry.getKey()+" = "+entry.getValue());
+								System.out.println("要插入的发送文件路径 = "+file_list.get(entry.getKey()));
+								send_file_list.add(file_list.get(entry.getKey()));
+
+							}
+						}
+
+						for(int j=0;j<send_file_list.size();j++){
+							System.out.println("发送的文件名 = "+send_file_list.get(j));
+						}
+
+						save_send_file_path ="/storage/sdcard0/NFC—课堂点名/待发送文件/"+str+"/传输中间文件.zip";
+
+						try {
+							//FileHelper.zip(send_file_list,save_send_file_path);
+							ZipControl.writeByApacheZipOutputStream(send_file_list,save_send_file_path,"hello");
+							//ZipControl.readByApacheZipFile(save_send_file_path,path);
+							StaticValue.select_filename = save_send_file_path;
+							System.out.println("要发送的文件路径为："+StaticValue.select_filename);
+							Toast.makeText(MainActivity.this,"文件选择成功！",Toast.LENGTH_SHORT).show();
+							file_list_window.dismiss();
+						}catch (IOException e){
+							System.out.println("压缩失败！");
+							Toast.makeText(MainActivity.this,"文件选择失败！",Toast.LENGTH_SHORT).show();
+							file_list_window.dismiss();
+						}
+
+
+					}else{
+						System.out.println("文件创建失败");
+					}
+
+
+
+
 					break;
 				case R.id.reflect_infor_button:
 					toggle();

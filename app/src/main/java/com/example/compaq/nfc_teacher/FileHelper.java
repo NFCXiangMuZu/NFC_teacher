@@ -7,6 +7,8 @@ package com.example.compaq.nfc_teacher;
  * @date 2013-2-26 下午5:45:40
  * @version V1.0
  */
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
@@ -30,6 +32,10 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Files;
 import android.util.Log;
+
+import org.apache.tools.zip.ZipEntry;
+import org.apache.tools.zip.ZipFile;
+import org.apache.tools.zip.ZipOutputStream;
 
 import static android.provider.MediaStore.Files.*;
 import static android.provider.MediaStore.Files.FileColumns.*;
@@ -162,6 +168,25 @@ public class FileHelper {
 		return res;
 	}
 
+	public static boolean CopyFile(String fromFile, String toFile) {
+		try {
+			InputStream fosfrom = new FileInputStream(fromFile);
+			OutputStream fosto = new FileOutputStream(toFile);
+			byte bt[] = new byte[4096];
+			int c;
+			while ((c = fosfrom.read(bt)) > 0) {
+				fosto.write(bt, 0, c);
+			}
+			fosfrom.close();
+			fosto.close();
+			bt = null;
+			return true;
+
+		} catch (Exception ex) {
+			return false;
+		}
+	}
+
 	public static boolean CopyAssetFile(Context ctx, String fromFile, String toFile) {
 		try {
 			InputStream fosfrom = ctx.getAssets().open(fromFile);
@@ -187,6 +212,46 @@ public class FileHelper {
 			return file.delete();
 		} catch (Exception ex) {
 			return false;
+		}
+	}
+
+	/**
+	 *待压缩的文件数组，只能是文件，不能包含文件夹
+	 *生成压缩文件名，例如/local/temp/test.zip
+	 * @throws IOException
+	 */
+	public static void zip(List<String> files, String zipFile) throws IOException {
+		BufferedInputStream origin = null;
+		ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(
+				new FileOutputStream(zipFile)));
+		byte data[] = null;
+		FileInputStream fi = null;
+		ZipEntry entry = null;
+		try {
+			data = new byte[1024];
+
+			for (int i = 0; i < files.size(); i++) {
+				fi = new FileInputStream(files.get(i));
+				origin = new BufferedInputStream(fi, 1024);
+				try {
+					entry = new ZipEntry(files.get(i).substring(files.get(i)
+							.lastIndexOf("/") + 1));
+					out.putNextEntry(entry);
+					int count;
+					while ((count = origin.read(data, 0, 1024)) != -1) {
+						out.write(data, 0, count);
+					}
+				} finally {
+					entry = null;
+					origin.close();
+					origin = null;
+				}
+			}
+		} finally {
+			fi = null;
+			data = null;
+			out.close();
+			out = null;
 		}
 	}
 

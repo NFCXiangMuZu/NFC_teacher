@@ -49,12 +49,23 @@
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
         android:id="@+id/file_list_window_listview"
         android:layout_below="@id/file_list_window_NB"
         android:background="#fff"
         android:divider="#666565"
         android:dividerHeight="0.5dp"
         ></ListView>
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:id="@+id/file_list_window_confirm_button"
+        android:layout_below="@id/file_list_window_listview"
+        android:background="#2477dc"
+        android:text="确认选择"
+        android:textColor="#fff"
+        />
 
 </RelativeLayout>

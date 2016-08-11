@@ -236,6 +236,11 @@ public class NormalAttendence extends Activity
             // TODO Auto-generated method stub
             switch(arg0.getId()){
                 case R.id.NA_backToMain_button:
+
+                    //删除传输中间文件
+                    FileHelper.deleteFile(StaticValue.select_filename);
+                    StaticValue.select_filename = null;
+
                     Intent intent_backTomain=new Intent();
                     intent_backTomain.setClass(NormalAttendence.this,MainActivity.class );
                     NormalAttendence.this.startActivity(intent_backTomain);
@@ -579,7 +584,6 @@ public class NormalAttendence extends Activity
                 file_send_dialog.setMax(StaticValue.file_send_length);
                 file_send_dialog.setProgress(StaticValue.file_send_percent);
                 System.out.println("已传输文件长度为："+StaticValue.file_send_percent+"MB");
-
 
             }
 

@@ -99,4 +99,6 @@ public class FileAdapter extends BaseAdapter{
 		FileAdapter.isSelected = isSelected;
 	}
 
+
+
 }
