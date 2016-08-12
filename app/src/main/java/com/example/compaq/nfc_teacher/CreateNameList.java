@@ -53,6 +53,7 @@ import android.widget.Toast;
 @SuppressLint("SdCardPath")
 public class CreateNameList extends Activity{
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
@@ -79,11 +80,11 @@ public class CreateNameList extends Activity{
         //StaticValue.INNERNAMELIST=StaticValue.INNERNAMELIST+sheet.getCell(0, 0).getContents();
         //创建数据库
         System.out.println(StaticValue.MY_TABLE_NAME);
+        //创建数据库
         SQLiteManager helper=new SQLiteManager(context);
         System.out.println("==========="+StaticValue.MY_TABLE_NAME+"============");
         helper.CreateTable(StaticValue.MY_TABLE_NAME);
 
-        //NameListS ervice namelist= new NameListService(this);
         //NameListDbHelper myhelper=namelist.getdbhelper();
         helper.clearall(StaticValue.MY_TABLE_NAME);
         //自定义数据插入时间
@@ -92,7 +93,7 @@ public class CreateNameList extends Activity{
         String time  = df1.format(date11);
         Timestamp now = Timestamp.valueOf(time);
         for(int i=2;i<row_num;i++){
-            helper.insertData(StaticValue.MY_TABLE_NAME,
+            helper.insertDataToNamelist(StaticValue.MY_TABLE_NAME,
                     sheet.getCell(2, i).getContents(),
                     sheet.getCell(1,i).getContents(), 0, 0, 0,now);
         }
@@ -156,6 +157,7 @@ public class CreateNameList extends Activity{
 			*/
 
             //遍历表名
+            //创建数据库
             SQLiteManager myhelper = new SQLiteManager(class_name);
             Cursor cursor=myhelper.get_tablename();
             int i=0;

@@ -161,7 +161,7 @@ public class ChouDianActivity extends Activity {
                         p = SQLiteManager.query_all(StaticValue.MY_TABLE_NAME,choudian_xuehao_list.get(j));
                         System.out.println("+++++签到数值为："+p[0]+p[1]+p[2]);
                         Timestamp now = new Timestamp(System.currentTimeMillis());//获取系统当前时间
-                        SQLiteManager.updateData(StaticValue.MY_TABLE_NAME,
+                        SQLiteManager.updateDataInNamelist(StaticValue.MY_TABLE_NAME,
                                 choudian_name_list.get(j),
                                 choudian_xuehao_list.get(j),
                                 p[0], p[1]+1, p[2], now

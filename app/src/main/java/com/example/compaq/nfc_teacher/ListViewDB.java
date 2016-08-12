@@ -135,7 +135,7 @@ public class ListViewDB extends Activity {
 							int_qingjia = Integer.parseInt(et_qingjia.getText().toString());
 
 							Timestamp now = new Timestamp(System.currentTimeMillis());//获取系统当前时间
-							myhelper.updateData(StaticValue.MY_TABLE_NAME, str_name, str_xuehao, int_chuxi, int_quexi, int_qingjia, now);
+							SQLiteManager.updateDataInNamelist(StaticValue.MY_TABLE_NAME, str_name, str_xuehao, int_chuxi, int_quexi, int_qingjia, now);
 							//System.out.println(str);
 							//Toast.makeText(ListViewDB.this, e.getText(), Toast.LENGTH_SHORT).show();
 							Load_listview();

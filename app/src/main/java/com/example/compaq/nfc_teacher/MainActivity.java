@@ -13,6 +13,7 @@ import java.util.Vector;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -72,6 +73,9 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 	Button file_list_window_confirm_button;
 	List<String> file_list = new ArrayList<>();
 
+	//创建数据库
+	SQLiteManager myhelper=new SQLiteManager(this);
+
 	View contentView = null;
 
 
@@ -83,6 +87,9 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 		requestWindowFeature(Window.FEATURE_NO_TITLE); // 设置无标题
 		setContentView(R.layout.activity_main);
 		setBehindContentView(R.layout.sliding_manu);
+
+		//创建文件发送相关的两个数据表
+		myhelper.Create_Database_For_Filesend();
 
 		if(StaticValue.select_filename==null){//判断是否选择发送文件
 			Toast.makeText(MainActivity.this,"请选择下发文件",Toast.LENGTH_SHORT).show();

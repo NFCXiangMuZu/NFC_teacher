@@ -394,7 +394,7 @@ public class NormalAttendence extends Activity
                     if (hours >= 2) {//默认两个小时内不能重复签到
                         int_chuxi = result[0] + 1;//每一次接触都会让出席记录+1，其他不变
 
-                        SQLiteManager.updateData(StaticValue.MY_TABLE_NAME, result_strname,
+                        SQLiteManager.updateDataInNamelist(StaticValue.MY_TABLE_NAME, result_strname,
                                 result_strxuehao, int_chuxi, int_quexi, int_qingjia, now);
                         Toast.makeText(this, result_strname + "信息被修改" , Toast.LENGTH_LONG).show();
                         User_icon_button.setText(result_strname+"\n"+"已签到");
@@ -453,57 +453,6 @@ public class NormalAttendence extends Activity
         }
     }
 
-    //NFC数据格式
-    private static enum NFCtype{
-        UNKNOWN,TEXT,URI,SMART_POSTER,ABSOLUTE_URI
-    }
-
-    private NFCtype getTagType(final NdefMessage msg){
-        if(msg==null){
-            return null;
-        }
-        for(NdefRecord record:msg.getRecords()){
-            if(record.getTnf()==NdefRecord.TNF_WELL_KNOWN){
-                if(Arrays.equals(record.getType(), NdefRecord.RTD_TEXT)){
-                    System.out.println("Tag的类型是text");
-                    return NFCtype.TEXT;
-                }
-                if(Arrays.equals(record.getType(), NdefRecord.RTD_URI)){
-                    System.out.println("Tag的类型是URI");
-                    return NFCtype.URI;
-                }
-                if(Arrays.equals(record.getType(), NdefRecord.RTD_SMART_POSTER)){
-                    System.out.println("Tag的类型是智能海报");
-                    return NFCtype.SMART_POSTER;
-                }
-            }
-            else if(record.getTnf()==NdefRecord.TNF_ABSOLUTE_URI){
-                System.out.println("Tag的类型是ABSOLUTE_URI");
-                return NFCtype.ABSOLUTE_URI;
-            }
-        }
-        return null;
-    }
-
-    //读取text格式的tag
-    private String getText(final byte[] payload){
-
-        System.out.println("----getText----");
-
-        if(payload==null){
-            return null;
-        }
-        try{
-            String textencoding=((payload[0]&0200)==0)?"UTF-8":"UTF-16";
-            int languageCodeLength=payload[0]&0077;
-            return new String(payload,languageCodeLength+1,payload.length-languageCodeLength-1,textencoding);
-
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     //新建一个record
     private NdefRecord createRecord(String text) throws UnsupportedEncodingException {
 
@@ -556,6 +505,7 @@ public class NormalAttendence extends Activity
             Intent sendDataIntent = new Intent(BluetoothTools.ACTION_DATA_TO_SERVICE);
             sendDataIntent.putExtra(BluetoothTools.DATA, transmit);
             sendBroadcast(sendDataIntent);
+            SQLiteManager.insertDataTo_FileStatusList(StaticValue.select_filename,0);
 
             System.out.println("广播成功！！！！");
 
@@ -578,6 +528,8 @@ public class NormalAttendence extends Activity
                 Toast.makeText(NormalAttendence.this, "文件发送成功了！！！", Toast.LENGTH_LONG).show();
                 //Toast.makeText(NormalAttendence.this,"发送时间为："+StaticValue.file_send_time,Toast.LENGTH_LONG).show();
                 System.out.println("发送时间为："+StaticValue.file_send_time);
+                //修改数据库中文件传输记录表中对应文件状态
+                SQLiteManager.updateDataIn_FileStatusList(StaticValue.select_filename,1);
             }else if(BluetoothTools.ACTION_FILE_SEND_PERCENT.equals(action)){
 
                 System.out.println("文件总长度为："+StaticValue.file_send_length+"MB");
