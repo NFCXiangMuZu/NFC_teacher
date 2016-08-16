@@ -63,13 +63,6 @@
 
         </activity>
 
-        <activity
-            android:name="com.example.compaq.nfc_teacher.Reflect_information"
-            android:label="@string/reflect_information_title"
-            >
-
-        </activity>
-
     </application>
 
 </manifest>

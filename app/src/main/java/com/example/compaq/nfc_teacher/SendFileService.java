@@ -1,10 +1,11 @@
 package com.example.compaq.nfc_teacher;
 
+/**
+ * 接收开始文件发送广播的服务
+ */
+
 import java.io.IOException;
 import java.io.Serializable;
-
-
-
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -16,31 +17,43 @@ import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import com.example.compaq.nfc_teacher.BluetoothCommunSocket;
-import com.example.compaq.nfc_teacher.StaticValue;
 
 public class SendFileService extends Service {
 
 
-	//蓝牙通讯
+	//自定义蓝牙通信socket
 	private BluetoothCommunSocket communSocket;
-
+    //获取蓝牙适配器
 	BluetoothAdapter adapter=BluetoothAdapter.getDefaultAdapter();
 
 	BluetoothSocket socket=null;
 	BluetoothDevice device;
 
-	//控制信息广播的接收器
+	@Override
+	public void onCreate() {
+		// TODO Auto-generated method stub
+		System.out.println("服务开启！");
+		IntentFilter intentfilter=new IntentFilter();
+		intentfilter.addAction(BluetoothTools.ACTION_DATA_TO_SERVICE);
+		registerReceiver(controlReceiver, intentfilter);
+		System.out.println("注册成功！！");
+		super.onCreate();
+	}
+
+	/**
+	 * 接收开始问价发送广播的接收器
+	 */
 	BroadcastReceiver controlReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			System.out.println("广播收到！");
+			System.out.println("开始文件传输");
+			//先获取远程蓝牙设备
 			device=adapter.getRemoteDevice(StaticValue.macaddress);
 			if(device!=null){
 				System.out.println("==获取成功==");
-				System.out.println("地址是："+device.getName());
 			}
 			try {
+				//连接到远程蓝牙设备
 				socket = device.createRfcommSocketToServiceRecord(BluetoothTools.PRIVATE_UUID);
 				socket.connect();
 			} catch (IOException e) {
@@ -55,8 +68,8 @@ public class SendFileService extends Service {
 				if (communSocket != null) {
 					class MyRunnable implements Runnable{
 						public void run(){
+							//开始文件发送
 							communSocket.write(transmit);
-							System.out.println("=====发送成功！=======");
 						}
 					}
 					Thread t=new Thread(new MyRunnable());
@@ -66,7 +79,9 @@ public class SendFileService extends Service {
 		}
 	};
 
-	//接收其他线程消息的Handler
+	/**
+	 * 接收蓝牙通信信息的handler
+	 */
 	Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -79,11 +94,6 @@ public class SendFileService extends Service {
 					break;
 				case BluetoothTools.MESSAGE_CONNECT_SUCCESS://连接成功
 					//开启通讯线程
-					//	communSocket = new BluetoothCommunSocket(handler, (BluetoothSocket)msg.obj);
-					//	communSocket.start();
-					//发送连接成功广播
-//						Intent succIntent = new Intent(BluetoothTools.ACTION_CONNECT_SUCCESS);
-//						sendBroadcast(succIntent);
 					break;
 				case BluetoothTools.MESSAGE_READ_OBJECT://读取到对象
 					//发送数据广播（包含数据对象）
@@ -93,7 +103,7 @@ public class SendFileService extends Service {
 					break;
 				case BluetoothTools.FILE_SEND_PERCENT://文件发送百分比
 					//发送文件传输百分比广播，实现进度条用
-					System.out.println("=====文件传输中====");
+					System.out.println("文件传输中");
 					Intent flieIntent = new Intent(BluetoothTools.ACTION_FILE_SEND_PERCENT);
 					flieIntent.putExtra(BluetoothTools.DATA, (Serializable)msg.obj);
 					sendBroadcast(flieIntent);
@@ -106,33 +116,13 @@ public class SendFileService extends Service {
 					break;
 				case BluetoothTools.FILE_SEND_SUCCESS:
 					//文件发送成功信号
-					System.out.println("====+++++====文件发送成功啦！！！！===++++=====");
-					//unregisterReceiver(controlReceiver);
+					System.out.println("文件发送成功");
 					Intent file_send_success_Intent = new Intent(BluetoothTools.ACTION_FILE_SEND_SUCCESS);
-					sendBroadcast(file_send_success_Intent);
+					sendBroadcast(file_send_success_Intent);//发送文件传输成功的广播信息
 			}
 			super.handleMessage(msg);
 		}
 	};
-
-
-
-
-
-	@Override
-	public void onCreate() {
-		// TODO Auto-generated method stub
-		System.out.println("服务开启！");
-		IntentFilter intentfilter=new IntentFilter();
-		intentfilter.addAction(BluetoothTools.ACTION_DATA_TO_SERVICE);
-		registerReceiver(controlReceiver, intentfilter);
-		System.out.println("注册成功！！");
-		super.onCreate();
-	}
-
-
-
-
 
 	@Override
 	public void onDestroy() {
@@ -140,8 +130,6 @@ public class SendFileService extends Service {
 		unregisterReceiver(controlReceiver);
 		super.onDestroy();
 	}
-
-
 
 	@Override
 	public IBinder onBind(Intent arg0) {

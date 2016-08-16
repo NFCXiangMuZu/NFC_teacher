@@ -1,52 +1,42 @@
 package com.example.compaq.nfc_teacher;
 
-        import java.io.UnsupportedEncodingException;
-        import java.sql.Timestamp;
-        import java.text.ParseException;
-        import java.text.SimpleDateFormat;
-        import java.util.Arrays;
-        import java.util.Calendar;
-        import java.util.Vector;
+/**
+ * 正常拍卡签到功能实现
+ */
 
-        import android.annotation.SuppressLint;
-        import android.annotation.TargetApi;
-        import android.app.Activity;
-        import android.app.AlertDialog;
-        import android.app.PendingIntent;
-        import android.app.ProgressDialog;
-        import android.bluetooth.BluetoothAdapter;
-        import android.bluetooth.BluetoothDevice;
-        import android.content.BroadcastReceiver;
-        import android.content.Context;
-        import android.content.DialogInterface;
-        import android.content.IntentFilter;
-        import android.content.Intent;
-        import android.nfc.FormatException;
-        import android.nfc.NdefMessage;
-        import android.nfc.NdefRecord;
-        import android.nfc.NfcAdapter;
-        import android.nfc.NfcAdapter.OnNdefPushCompleteCallback;
-        import android.nfc.NfcEvent;
-        import android.os.Build;
-        import android.os.Bundle;
-        import android.os.Handler;
-        import android.os.Message;
-        import android.os.Parcelable;
-        import android.view.View;
-        import android.view.Window;
-        import android.view.WindowManager;
-        import android.widget.Button;
-        import android.widget.ImageButton;
-        import android.widget.Toast;
+import java.io.UnsupportedEncodingException;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.PendingIntent;
+import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.IntentFilter;
+import android.content.Intent;
+import android.nfc.FormatException;
+import android.nfc.NdefMessage;
+import android.nfc.NfcAdapter;
+import android.os.Bundle;
+import android.os.Parcelable;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
 @SuppressLint("NewApi")
-public class NormalAttendence extends Activity
-        implements OnNdefPushCompleteCallback{
+public class NormalAttendence extends Activity{
+
     public String result_macaddress;
     BluetoothDevice bluetoothDevice;
     BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-    protected static final int MESSAGE_SENT = 0;
     NfcAdapter nfcadapter;
     PendingIntent pendingintent;
     ImageButton backTomain_button;
@@ -73,9 +63,10 @@ public class NormalAttendence extends Activity
 
         init_layout();//初始化layout
 
+        //启动接收文件发送信号的服务
         NormalAttendence.this.startService(new Intent(NormalAttendence.this,SendFileService.class));
 
-
+        //获取NFC适配器
         nfcadapter=NfcAdapter.getDefaultAdapter(this);
 
         //判断设备NFC是否可用
@@ -89,38 +80,11 @@ public class NormalAttendence extends Activity
 
                 pendingintent=PendingIntent.getActivity(this, 0,
                         new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-
-                //android Beam功能使用 开始
-                //here a callback is generated
-                NdefMessage ndefmeg = null;
-                try {
-                    ndefmeg = getNoteAsNdef();
-                } catch (UnsupportedEncodingException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                //nfcadapter.setNdefPushMessage(ndefmeg, this);
-
                 if(StaticValue.MY_TABLE_NAME==null){
-                    //弹出框定义
-                    AlertDialog.Builder alertdialog=new AlertDialog.Builder(NormalAttendence.this);
-                    alertdialog.setTitle("请选择点名班级");
-                    alertdialog.setPositiveButton("确定",new DialogInterface.OnClickListener(){
-
-                        @Override
-                        public void onClick(DialogInterface arg0, int arg1) {
-                            // TODO Auto-generated method stub
-                            final Vector<String> db_list_str_2=new Vector<String>();
-                            CreateNameList.select_namelist(getPackageName().toString(),
-                                    NormalAttendence.this,db_list_str_2);
-                        }
-
-                    });
-                    alertdialog.setNegativeButton("取消", null);
-                    alertdialog.show();
+                    Toast.makeText(NormalAttendence.this,"请先选择点名班级",Toast.LENGTH_SHORT).show();
                 }
 
-                //注册接收发送成功信息的广播
+                //注册接收文件传输信息的广播
                 IntentFilter intentfilter=new IntentFilter();
                 intentfilter.addAction(BluetoothTools.ACTION_FILE_SEND_SUCCESS);
                 intentfilter.addAction(BluetoothTools.ACTION_FILE_SEND_PERCENT);
@@ -130,14 +94,12 @@ public class NormalAttendence extends Activity
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
             }
-
         }
-
-
-
-
     }
 
+    /**
+     * 初始化layout
+     */
     public void init_layout(){
 
         backTomain_button = (ImageButton)findViewById(R.id.NA_backToMain_button);
@@ -154,95 +116,23 @@ public class NormalAttendence extends Activity
 
     }
 
-
-
-    private final Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case MESSAGE_SENT:
-                    //Toast.makeText(getApplicationContext(), "传输成功", Toast.LENGTH_LONG).show();
-                    //弹出框定义
-
-                    AlertDialog.Builder alertdialog=new AlertDialog.Builder(NormalAttendence.this);
-                    if(StaticValue.status==1){
-                        alertdialog.setTitle("                 签到完成");
-                    }
-                    else{
-                        alertdialog.setTitle("                 签到未完成");
-                    }
-                    alertdialog.setPositiveButton("回到主页",new DialogInterface.OnClickListener(){
-
-                        @Override
-                        public void onClick(DialogInterface arg0, int arg1) {
-                            // TODO Auto-generated method stub
-                            Intent intent=new Intent();
-                            intent.setClass(NormalAttendence.this,MainActivity.class);
-                            NormalAttendence.this.startActivity(intent);
-                            finish();
-                        }
-
-                    });
-                    alertdialog.setNegativeButton("继续签到", null);
-                    alertdialog.show();
-                    break;
-            }
-        }
-    };
-
-    @Override
-    public void onNdefPushComplete(NfcEvent arg0) {
-        // TODO Auto-generated method stub
-        StaticValue.status=1;
-        System.out.println("----------status="+StaticValue.status);
-        mHandler.obtainMessage(MESSAGE_SENT).sendToTarget();
-
-    }
-
-	/*
-	@Override
-	public NdefMessage createNdefMessage(NfcEvent arg0) {
-		// TODO Auto-generated method stub
-		System.out.println("=====createNdefMessage======");
-
-		//NdefMessage ndefmeg = new NdefMessage(new NdefRecord[]{NdefRecord.createApplicationRecord("com.example.nfc_student")});
-
-		NdefMessage ndefmeg = null;
-		try {
-			ndefmeg = getNoteAsNdef();
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return ndefmeg;
-	}
-
-
-	@Override
-	public Uri[] createBeamUris(NfcEvent arg0) {
-		// TODO Auto-generated method stub
-		Uri[] uris = new Uri[1];
-		uris[0] = file_path;
-		return uris;
-	}
-	*/
-
-
-
+    /**
+     * 按钮监听器集合
+     */
     class listener implements View.OnClickListener{
 
         @Override
         public void onClick(View arg0) {
             // TODO Auto-generated method stub
             switch(arg0.getId()){
-                case R.id.NA_backToMain_button:
-
+                case R.id.NA_backToMain_button://回到主页
                     //删除传输中间文件
                     if(FileHelper.deleteFile(StaticValue.select_filename)){
                         System.out.println("删除成功");
                     }else{
                         System.out.println("删除失败");
                     }
+
                     StaticValue.select_filename = null;
 
                     Intent intent_backTomain=new Intent();
@@ -250,7 +140,7 @@ public class NormalAttendence extends Activity
                     NormalAttendence.this.startActivity(intent_backTomain);
                     finish();
                     break;
-                case R.id.NA_ChouDian_button:
+                case R.id.NA_ChouDian_button://开启抽点功能
                     Intent intent_test_sensor=new Intent();
                     intent_test_sensor.setClass(NormalAttendence.this,ChouDianActivity.class );
                     NormalAttendence.this.startActivity(intent_test_sensor);
@@ -260,7 +150,6 @@ public class NormalAttendence extends Activity
         }
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     protected void onResume() {
         // TODO Auto-generated method stub
@@ -272,17 +161,9 @@ public class NormalAttendence extends Activity
             System.out.println("请在系统设置中先启用NFC功能");
         }
         this.nfcadapter.enableForegroundDispatch(this, pendingintent, null, null);
-        try {
-            nfcadapter.enableForegroundNdefPush(this,getNoteAsNdef());
-        } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
 
     }
 
-    @TargetApi(Build.VERSION_CODES.GINGERBREAD_MR1)
-    @SuppressLint("NewApi")
     @Override
     protected void onPause() {
         // TODO Auto-generated method stub
@@ -292,8 +173,6 @@ public class NormalAttendence extends Activity
             NfcAdapter.getDefaultAdapter(this).disableForegroundDispatch(this);
         }
     }
-
-
 
     @Override
     protected void onDestroy() {
@@ -320,6 +199,12 @@ public class NormalAttendence extends Activity
         }
     }
 
+    /**
+     * 处理通过拍卡接收的来自学生端的数据
+     * @param intent
+     * @throws UnsupportedEncodingException
+     * @throws FormatException
+     */
     protected void resolveIntent(Intent intent) throws UnsupportedEncodingException, FormatException {
         // 得到是否TAG触发
         System.out.println("----resolveIntent----");
@@ -327,18 +212,13 @@ public class NormalAttendence extends Activity
                 || NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())
                 || NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction()))
         {
-            //autowrite(intent);
-            // 处理该intent
-            //Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             Parcelable[] rawMsgs =
                     intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
             if(rawMsgs!=null) {
                 // only one message sent during the beam
                 NdefMessage msg = (NdefMessage) rawMsgs[0];
-                // 获取id数组
-                //byte[] bytesId = tag.getId();
-                System.out.println("自动写入成功,接收的数据长度为：" + msg.getRecords().length);
 
+                //循环处理接收到的一组NdefRecord
                 for (int i = 0; i < msg.getRecords().length; i += 4) {
                     result_macaddress = new String(msg.getRecords()[i].getPayload(), "GBK").substring(1);
                     result_strname = new String(msg.getRecords()[i + 1].getPayload(), "UTF-8");
@@ -346,13 +226,12 @@ public class NormalAttendence extends Activity
                     result_strreflect_infor = new String(msg.getRecords()[i + 3].getPayload(), "UTF-8");
                     StaticValue.reflect_information.add(result_strreflect_infor);
                     FileHelper.writeSDFile(result_strreflect_infor, StaticValue.MY_TABLE_NAME + ".txt");
-                    //Toast.makeText(this, result_strname+result_strxuehao, Toast.LENGTH_LONG).show();
 
                     //获取数据库中原本的出勤数据
                     int[] result = new int[3];
                     result = SQLiteManager.query_all(StaticValue.MY_TABLE_NAME, result_strxuehao);
 
-                    //计算时间间隔避免重复签到
+                    //计算时间间隔，避免单次课多次拍卡
                     long hours = 3;
                     Timestamp now = new Timestamp(System.currentTimeMillis());//获取系统当前时间
                     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//定义格式，不显示毫秒
@@ -371,22 +250,16 @@ public class NormalAttendence extends Activity
                         long l1 = c1.getTimeInMillis();
                         long l2 = c2.getTimeInMillis();
                         hours = Math.abs((l2 - l1) / (3600000));
-                        //System.out.println("时间间隔为："+l2+"-"+l1+"="+hours);
-                        //System.out.println("===数据库中的日期是："+date);
-                        //System.out.println("====现在的日期是："+date2);
                     } catch (ParseException e1) {
                         // TODO Auto-generated catch block
                         e1.printStackTrace();
                     }
-                    //System.out.println("数据库中时间为："+time);
-
 
                     int int_chuxi;
                     int int_quexi = result[1];
                     int int_qingjia = result[2];
                     if (hours >= 2) {//默认两个小时内不能重复签到
                         int_chuxi = result[0] + 1;//每一次接触都会让出席记录+1，其他不变
-
                         SQLiteManager.updateDataInNamelist(StaticValue.MY_TABLE_NAME, result_strname,
                                 result_strxuehao, int_chuxi, int_quexi, int_qingjia, now);
                         Toast.makeText(this, result_strname + "信息被修改" , Toast.LENGTH_LONG).show();
@@ -396,10 +269,7 @@ public class NormalAttendence extends Activity
                         int_chuxi = result[0];
                     }
 
-
-                    System.out.println("+++++++++" + result_macaddress);
                     StaticValue.macaddress = result_macaddress;
-                    //Toast.makeText(this, result_macaddress, Toast.LENGTH_LONG).show();
                     bluetoothDevice = bluetoothAdapter.getRemoteDevice(result_macaddress);
                     if (bluetoothDevice != null) {
                         System.out.println("==获取成功==");
@@ -407,85 +277,42 @@ public class NormalAttendence extends Activity
                     }
 
                     try {
-                        //ClsUtils.removeBond(bluetoothDevice.getClass(), bluetoothDevice);
-                        //System.out.println("取消配对！！");
-     	            	    	/*
-     	            	    	ClsUtils.setPin(bluetoothDevice.getClass(), bluetoothDevice, "0000"); // 手机和蓝牙采集器配对
-     	            	    	ClsUtils.createBond(bluetoothDevice.getClass(), bluetoothDevice);
-     	            	    	ClsUtils.cancelPairingUserInput(bluetoothDevice.getClass(), bluetoothDevice);
-     	            	    	*/
+                        //蓝牙配对连接
                         ClsUtils.cancelPairingUserInput(bluetoothDevice.getClass(), bluetoothDevice);
                         ClsUtils.setPin(bluetoothDevice.getClass(), bluetoothDevice, "0000");
                         ClsUtils.createBond(bluetoothDevice.getClass(), bluetoothDevice);
                         System.out.println("配对成功！！");
-                        //ClsUtils.pair(result_macaddress, "0000");
                     } catch (Exception e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    //System.out.println("地址是："+bluetoothDevice.getName());
                     if (StaticValue.select_filename != null) {
                         Thread thead = new sendThread();
                         thead.start();
-                        System.out.println("连接线程启动成功！！");
-                        //进度条对话框显示
+                        //文件传输进度条对话框显示
                         file_send_dialog = new ProgressDialog(NormalAttendence.this);
                         file_send_dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                         file_send_dialog.setTitle("文件发送中");
                         file_send_dialog.setCancelable(true);
                         file_send_dialog.show();
                     } else {
-                        System.out.println("无文件可发！！");
+                        System.out.println("无文件可发！");
                     }
                 }
             }else{
-                System.out.println("收到空数据！！！！！！！！！！！");
+                System.out.println("收到空数据！");
             }
 
 
         }
     }
 
-    //新建一个record
-    private NdefRecord createRecord(String text) throws UnsupportedEncodingException {
-
-        System.out.println("----createRecord----");
-
-        // String nameVcard = "BEGIN:VCARD" +"\n"+ "VERSION:2.1" +"\n" + "N:;" + "\n" +"ORG: PlanAyala"+"\n"+ "TEL;HOME:6302421" +"\n"+ "END:VCARD";
-        String nameVcard = text;
-        byte[] uriField = nameVcard.getBytes();
-        byte[] payload = new byte[uriField.length + 1];              //add 1 for the URI Prefix
-        //payload[0] = 0x01;                                      //prefixes http://www. to the URI
-        System.arraycopy(uriField, 0, payload, 1, uriField.length);  //appends URI to payload
-
-        NdefRecord nfcRecord = new NdefRecord(
-                NdefRecord.TNF_MIME_MEDIA, "text/vcard".getBytes(), new byte[0], payload);
-
-
-        return nfcRecord;
-    }
-
-    private NdefMessage getNoteAsNdef() throws UnsupportedEncodingException {
-        System.out.println("----getNoteAsNdef----");
-        String vcard = "黄明";
-        String num="1325114014";
-        if (vcard.equals("")) {
-            return null;
-        } else {
-            NdefRecord textRecord = createRecord(vcard);
-            NdefRecord numRecord = createRecord(num);
-            //System.out.println("要写入的text是："+getText(textRecord.getPayload()));
-            return new NdefMessage(new NdefRecord[] {textRecord,numRecord});
-        }
-
-    }
-
+    /**
+     * 发送开始文件传输的广播
+     */
     private class sendThread extends Thread {
 
-        public sendThread(){
-
-
-        }
+        public sendThread(){}
 
         public void run() {
 
@@ -499,27 +326,25 @@ public class NormalAttendence extends Activity
             sendDataIntent.putExtra(BluetoothTools.DATA, transmit);
             sendBroadcast(sendDataIntent);
             SQLiteManager.insertDataTo_FileStatusList(StaticValue.select_filename,0);
-
-            System.out.println("广播成功！！！！");
-
-
+            System.out.println("广播成功");
 
         }
     }
 
+    /**
+     * 接收文件传输过程信息的广播
+     */
     BroadcastReceiver receiver=new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context arg0, Intent arg1) {
 
             // TODO Auto-generated method stub
-
             System.out.println("文件传输成功！！");
             String action = arg1.getAction();
             if (BluetoothTools.ACTION_FILE_SEND_SUCCESS.equals(action)) {
                 file_send_dialog.cancel();
-                Toast.makeText(NormalAttendence.this, "文件发送成功了！！！", Toast.LENGTH_LONG).show();
-                //Toast.makeText(NormalAttendence.this,"发送时间为："+StaticValue.file_send_time,Toast.LENGTH_LONG).show();
+                Toast.makeText(NormalAttendence.this, "文件发送成功", Toast.LENGTH_LONG).show();
                 System.out.println("发送时间为："+StaticValue.file_send_time);
                 //修改数据库中文件传输记录表中对应文件状态
                 SQLiteManager.updateDataIn_FileStatusList(StaticValue.select_filename,1);

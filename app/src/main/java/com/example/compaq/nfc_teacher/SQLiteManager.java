@@ -419,17 +419,6 @@ public class SQLiteManager {
 		System.out.println("删除成功");
 	}
 
-	public List<NameList> getScrolldata(int startresult,int maxresult){
-		List<NameList> namelists=new ArrayList<NameList>();
-		SQLiteDatabase db=myhelper.getReadableDatabase();
-		Cursor cursor=db.rawQuery("select * from "+StaticValue.MY_TABLE_NAME+" limit ?,?", new String[]{String.valueOf(startresult),String.valueOf(maxresult)});
-		while(cursor.moveToNext()){
-			namelists.add(new NameList(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4),cursor.getInt(0)));
-
-		}
-		return namelists;
-	}
-
 	public Cursor getCursorScrolldata(int startresult,int maxresult){
 		SQLiteDatabase db=myhelper.getReadableDatabase();
 		return db.rawQuery("select _id as _id,name,xuehao,chuxi,quexi,qingjia from "+StaticValue.MY_TABLE_NAME+" limit ?,?", new String[]{String.valueOf(startresult),String.valueOf(maxresult)});

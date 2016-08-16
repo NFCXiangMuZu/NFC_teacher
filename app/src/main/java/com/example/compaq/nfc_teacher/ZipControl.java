@@ -1,7 +1,7 @@
 package com.example.compaq.nfc_teacher;
 
 /**
- * Created by Compaq on 2016/8/10.
+ * 进行文件解压缩操作的专用工具类
  */
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -21,18 +21,11 @@ import java.util.zip.ZipInputStream;
 import org.apache.tools.zip.ZipEntry;
 import org.apache.tools.zip.ZipFile;
 import org.apache.tools.zip.ZipOutputStream;
-
 import android.util.Log;
-/**
- *
- * [一句话功能简述]<BR>
- * [功能详细描述]
- * @author zhouxin
- * @version [Android MTVClient C01, 2011-3-4]
- */
+
 public class ZipControl
 {
-    private static boolean isCreateSrcDir = false;//是否创建源目录 在这里的话需要说明下。如果需要创建源目录的话。就在这里设为true否则为false;
+    private static boolean isCreateSrcDir = false;
     private static String TAG="ZipControl";
     /**
      *

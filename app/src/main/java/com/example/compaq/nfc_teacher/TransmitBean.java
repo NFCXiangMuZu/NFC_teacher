@@ -1,17 +1,13 @@
 package com.example.compaq.nfc_teacher;
 
+/**
+ * 用于蓝牙传输的数据类
+ */
+
 import java.io.Serializable;
 
-/**
- * 用于传输的数据类
- * @author liujian
- *
- */
 public class TransmitBean implements Serializable{
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 1L;
 	private String msg = "";
 	private String filename = "";
@@ -20,8 +16,6 @@ public class TransmitBean implements Serializable{
 	private String tspeed = "";
 	private boolean showflag ;
 	private byte[] file ;
-//	private  BluetoothCommunThread communThread;	
-
 
 	public void setMsg(String msg) {
 		this.msg = msg;
@@ -78,15 +72,6 @@ public class TransmitBean implements Serializable{
 	public void setShowflag(boolean showflag) {
 		this.showflag = showflag;
 	}
-
-
-//	public BluetoothCommunThread getCommunThread() {
-//		return communThread;
-//	}
-//
-//	public void setCommunThread(BluetoothCommunThread communThread) {
-//		this.communThread = communThread;
-//	}
 
 
 }
