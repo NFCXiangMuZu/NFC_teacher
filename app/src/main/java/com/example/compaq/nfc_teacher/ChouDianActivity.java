@@ -1,5 +1,9 @@
 package com.example.compaq.nfc_teacher;
 
+/**
+ * 抽点功能实现Activity
+ */
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -7,7 +11,6 @@ import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -34,7 +37,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
-
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -42,20 +44,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
-/**
- * Created by Compaq on 2016/8/5.
- */
 public class ChouDianActivity extends Activity {
 
+    private static final String TAG = "ChouDianActivity";
+    private static final int SENSOR_SHAKE = 10;
+
+    //传感器参数获取相关变量
     private SensorManager sensorManager;
     private Vibrator vibrator;
 
     //拍卡签到用到的变量
-    private static final int MESSAGE_SENT = 0;
     NfcAdapter nfcadapter;
     PendingIntent pendingintent;
     BluetoothDevice bluetoothDevice;
-    BluetoothSocket bluetoothSocket;
     BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     ProgressDialog file_send_dialog;
 
@@ -63,13 +64,13 @@ public class ChouDianActivity extends Activity {
     Button back_button;
     ListView random_namelist;
 
+    //显示随机产生的学生信息列表
     ArrayList<HashMap<String, Object>> listitem = new ArrayList<HashMap<String, Object>>();
     List<String> choudian_xuehao_list = new ArrayList<>();
     List<String> choudian_name_list = new ArrayList<>();
     int choudian_student_num = 0;
 
-    private static final String TAG = "ChouDianActivity";
-    private static final int SENSOR_SHAKE = 10;
+
 
     /** Called when the activity is first created. */
     @Override
@@ -81,32 +82,34 @@ public class ChouDianActivity extends Activity {
         //初始化layout
         init_layout();
 
+        //获取重力传感器
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
-        //实现屏幕常亮
+        //设置屏幕常亮
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 
+        //获取NFC适配器
         nfcadapter = NfcAdapter.getDefaultAdapter(this);
-        pendingintent = PendingIntent.getActivity(this, 0,
-                new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
         //判断设备NFC是否可用
         if(nfcadapter==null){
             Toast.makeText(this,"您的爱机不支持NFC",Toast.LENGTH_LONG).show();
+            finish();//退出
         }else {
 
-            if (!nfcadapter.isEnabled()) {
-                Toast.makeText(this, "您的爱机还没开启NFC", Toast.LENGTH_LONG).show();
-            } else {
+                if (!nfcadapter.isEnabled()) {
+                   Toast.makeText(this, "您的爱机还没开启NFC", Toast.LENGTH_LONG).show();
+                   BluetoothTools.openBluetooth();//开启蓝牙
+                }
 
                 pendingintent = PendingIntent.getActivity(this, 0,
                         new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
-
+                //判断是否选择点名班级
                 if (StaticValue.MY_TABLE_NAME == null) {
-                    //弹出框定义
+                    //弹出框提示
                     AlertDialog.Builder alertdialog = new AlertDialog.Builder(ChouDianActivity.this);
                     alertdialog.setTitle("请选择点名班级");
                     alertdialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -122,30 +125,38 @@ public class ChouDianActivity extends Activity {
                     });
                     alertdialog.setNegativeButton("取消", null);
                     alertdialog.show();
-                }
 
-            }
+                }
         }
 
-        //注册接收发送成功信息的广播
+        //注册接收文件传输成功信息的广播
         IntentFilter intentfilter=new IntentFilter();
         intentfilter.addAction(BluetoothTools.ACTION_FILE_SEND_SUCCESS);
         intentfilter.addAction(BluetoothTools.ACTION_FILE_SEND_PERCENT);
         registerReceiver(receiver, intentfilter);
 
+        //启动文件发送控制服务
         ChouDianActivity.this.startService(new Intent(ChouDianActivity.this,SendFileService.class));
+
     }
 
+    /**
+     * 初始化layout元素
+     */
     public void init_layout(){
 
-        back_button = (Button)findViewById(R.id.ChouDian_activity_leftbutton);
-        random_namelist = (ListView)findViewById(R.id.ChouDian_activity_listview);
+        back_button = (Button)findViewById(R.id.ChouDian_activity_leftbutton);//返回主界面按钮
+        random_namelist = (ListView)findViewById(R.id.ChouDian_activity_listview);//显示随机产生的学生信息列表
 
-        back_button.setOnClickListener(new listener());
+        back_button.setOnClickListener(new listener());//给返回按钮添加监听器
 
 
     }
 
+
+    /**
+     * 界面按钮总监听器
+     */
     class listener implements View.OnClickListener {
 
         @Override
@@ -159,7 +170,6 @@ public class ChouDianActivity extends Activity {
                         //没有前来拍卡的同学要自动更新其数据库中的缺席属性值
                         int[] p;
                         p = SQLiteManager.query_all(StaticValue.MY_TABLE_NAME,choudian_xuehao_list.get(j));
-                        System.out.println("+++++签到数值为："+p[0]+p[1]+p[2]);
                         Timestamp now = new Timestamp(System.currentTimeMillis());//获取系统当前时间
                         SQLiteManager.updateDataInNamelist(StaticValue.MY_TABLE_NAME,
                                 choudian_name_list.get(j),
@@ -168,6 +178,7 @@ public class ChouDianActivity extends Activity {
                                 );
 
                     }
+
                     Intent intent_back = new Intent();
                     intent_back.setClass(ChouDianActivity.this, MainActivity.class);
                     ChouDianActivity.this.startActivity(intent_back);
@@ -187,8 +198,6 @@ public class ChouDianActivity extends Activity {
                     sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                     SensorManager.SENSOR_DELAY_NORMAL);
         }
-
-        System.out.println("----onResume----");
         if (this.nfcadapter == null)
             return;
         if (!this.nfcadapter.isEnabled()) {
@@ -218,11 +227,10 @@ public class ChouDianActivity extends Activity {
     @Override
     public void onDestroy() {
         // TODO Auto-generated method stub
-        unregisterReceiver(receiver);
+        unregisterReceiver(receiver);//取消广播
         super.onDestroy();
     }
 
-    @SuppressLint("NewApi")
     @Override
     protected void onNewIntent(Intent intent) {
         // TODO Auto-generated method stub
@@ -241,18 +249,12 @@ public class ChouDianActivity extends Activity {
     }
 
 
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        // TODO Auto-generated method stub
-        Toast.makeText(getApplicationContext(), "回到主页", Toast.LENGTH_LONG).show();
-        Intent intent=new Intent();
-        intent.setClass(ChouDianActivity.this,MainActivity.class);
-        ChouDianActivity.this.startActivity(intent);
-        finish();
-        return super.onKeyDown(keyCode, event);
-    }
-
+    /**
+     * 接收学生拍卡签到实现函数
+     * @param intent
+     * @throws UnsupportedEncodingException
+     * @throws FormatException
+     */
     @SuppressLint("NewApi")
     protected void resolveIntent(Intent intent) throws UnsupportedEncodingException, FormatException {
         // 得到是否TAG触发
@@ -262,26 +264,23 @@ public class ChouDianActivity extends Activity {
                 || NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())
                 || NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction()))
         {
-            //autowrite(intent);
-            // 处理该intent
-            //Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             Parcelable[] rawMsgs =
                     intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-            // only one message sent during the beam
             NdefMessage msg = (NdefMessage)rawMsgs[0];
-            // 获取id数组
-            //byte[] bytesId = tag.getId();
-            System.out.println("自动写入成功");
+            //签到学生的学号
             String result_macaddress = new String(msg.getRecords()[0].getPayload(), "GBK").substring(1);
+            //签到学生姓名
             String result_strname=new String(msg.getRecords()[1].getPayload(),"UTF-8");
+            //签到学生端设备的蓝牙地址
             String result_strxuehao=new String(msg.getRecords()[2].getPayload(),"UTF-8").substring(1,11);
+            //学生编辑的课堂反馈信息
             String result_strreflect_infor=new String(msg.getRecords()[3].getPayload(),"UTF-8");
 
             //找出拍卡学生在listview中的位置
             for(int k=0;k<choudian_xuehao_list.size();k++){
 
+                //删除已签到的学生信息项
                 if(choudian_xuehao_list.get(k).equals(result_strxuehao)){
-                    //删除已签到的学生信息项
                     listitem.remove(k);
                     choudian_xuehao_list.remove(k);
                     choudian_name_list.remove(k);
@@ -291,7 +290,7 @@ public class ChouDianActivity extends Activity {
 
             }
 
-            //重新生成适配器
+            //刷新学生信息列表
             SimpleAdapter listitemadapter = new SimpleAdapter(ChouDianActivity.this,
                     listitem,
                     R.layout.choudian_activity_list_item,
@@ -301,40 +300,37 @@ public class ChouDianActivity extends Activity {
             //更新ListView显示内容
             random_namelist.setAdapter(listitemadapter);
 
-
-            System.out.println("+++++++++" + result_macaddress);
+            //获取蓝牙地址
             StaticValue.macaddress = result_macaddress;
-            //Toast.makeText(this, result_macaddress, Toast.LENGTH_LONG).show();
+            //获取远程蓝牙设备
             bluetoothDevice = bluetoothAdapter.getRemoteDevice(result_macaddress);
             if (bluetoothDevice != null) {
-                System.out.println("==获取成功==");
                 System.out.println("地址是：" + bluetoothDevice.getName());
             }
+            //进行蓝牙配对
             try {
                 ClsUtils.cancelPairingUserInput(bluetoothDevice.getClass(), bluetoothDevice);
                 ClsUtils.setPin(bluetoothDevice.getClass(), bluetoothDevice, "0000");
                 ClsUtils.createBond(bluetoothDevice.getClass(), bluetoothDevice);
                 System.out.println("配对成功！！");
-                //ClsUtils.pair(result_macaddress, "0000");
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            //System.out.println("地址是："+bluetoothDevice.getName());
+            //判断教师端是否选择下发文件
             if (StaticValue.select_filename != null) {
-
+                //启动发送文件线程
                 Thread thead = new sendThread();
                 thead.start();
 
-                //进度条对话框显示
+                //文件发送进度条对话框显示
                 file_send_dialog = new ProgressDialog(ChouDianActivity.this);
                 file_send_dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 file_send_dialog.setTitle("文件发送中");
                 file_send_dialog.setCancelable(true);
                 file_send_dialog.show();
 
-                System.out.println("文件目录为："+StaticValue.select_filename);
-                System.out.println("连接线程启动成功！！");
+
             } else {
                 System.out.println("无文件可发！！");
             }
@@ -381,13 +377,12 @@ public class ChouDianActivity extends Activity {
             switch (msg.what) {
                 case SENSOR_SHAKE:
 
-                    Log.i(TAG, "检测到摇晃，执行操作！");
-
-                    if(StaticValue.MY_TABLE_NAME!=null) {
-
-                        //更新ListView内容
+                        Log.i(TAG, "检测到摇晃，执行操作！");
+                        //更新学生信息列表内容
                         HashMap<String, Object> map = new HashMap<String, Object>();
+                        //随机产生一个0~40的数字
                         int i = (int)(1+Math.random()*40);
+                        //检索数据库中该序号学生的信息，并插入列表listitem中
                         map.put("choudian_activity_listview_xuehao_item",SQLiteManager.query_xuehao(StaticValue.MY_TABLE_NAME,i) );
                         choudian_xuehao_list.add(SQLiteManager.query_xuehao(StaticValue.MY_TABLE_NAME,i));
                         map.put("choudian_activity_listview_name_item",SQLiteManager.query_name(StaticValue.MY_TABLE_NAME,i) );
@@ -401,13 +396,9 @@ public class ChouDianActivity extends Activity {
                                 new String[]{"choudian_activity_listview_xuehao_item", "choudian_activity_listview_name_item"},
                                 new int[]{R.id.choudian_activity_listview_xuehao_item, R.id.choudian_activity_listview_name_item}
                         );
-
+                        //更新列表
                         random_namelist.setAdapter(listitemadapter);
-                    }else{
 
-                        Toast.makeText(ChouDianActivity.this,"请选择点名班级",Toast.LENGTH_LONG).show();
-
-                    }
                     break;
             }
         }
@@ -415,13 +406,12 @@ public class ChouDianActivity extends Activity {
     };
 
 
-    //发送文件用的线程
+    /**
+     * 发送开始传输文件广播的线程
+     */
     private class sendThread extends Thread {
 
-        public sendThread(){
-
-
-        }
+        public sendThread(){}
 
         public void run() {
 
@@ -434,34 +424,52 @@ public class ChouDianActivity extends Activity {
             sendDataIntent.putExtra(BluetoothTools.DATA, transmit);
             sendBroadcast(sendDataIntent);
 
-            System.out.println("广播成功！！！！");
         }
     }
 
 
+    /**
+     * 接收文件传输反馈信息的广播
+     */
     BroadcastReceiver receiver=new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context arg0, Intent arg1) {
 
             // TODO Auto-generated method stub
-
-            System.out.println("文件传输成功！！");
             String action = arg1.getAction();
             if (BluetoothTools.ACTION_FILE_SEND_SUCCESS.equals(action)) {
-                Toast.makeText(ChouDianActivity.this, "文件发送成功了！！！", Toast.LENGTH_LONG).show();
-                file_send_dialog.cancel();
+
+                //文件传输成功反馈信息
+                Toast.makeText(ChouDianActivity.this, "文件发送成功！", Toast.LENGTH_LONG).show();
+                file_send_dialog.cancel();//关闭文件传输进度显示窗口
+
             }else if(BluetoothTools.ACTION_FILE_SEND_PERCENT.equals(action)){
 
-                System.out.println("文件总长度为："+StaticValue.file_send_length+"MB");
+                //文件传输过程反馈信息
                 file_send_dialog.setMax(StaticValue.file_send_length);
                 file_send_dialog.setProgress(StaticValue.file_send_percent);
-                System.out.println("已传输文件长度为："+StaticValue.file_send_percent+"MB");
-
 
             }
 
         }
     };
+
+    /**
+     * 物理按键返回
+     * @param keyCode
+     * @param event
+     * @return
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        // TODO Auto-generated method stub
+        Toast.makeText(getApplicationContext(), "回到主页", Toast.LENGTH_LONG).show();
+        Intent intent=new Intent();
+        intent.setClass(ChouDianActivity.this,MainActivity.class);
+        ChouDianActivity.this.startActivity(intent);
+        finish();
+        return super.onKeyDown(keyCode, event);
+    }
 
 }

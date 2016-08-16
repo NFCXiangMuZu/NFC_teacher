@@ -238,7 +238,11 @@ public class NormalAttendence extends Activity
                 case R.id.NA_backToMain_button:
 
                     //删除传输中间文件
-                    FileHelper.deleteFile(StaticValue.select_filename);
+                    if(FileHelper.deleteFile(StaticValue.select_filename)){
+                        System.out.println("删除成功");
+                    }else{
+                        System.out.println("删除失败");
+                    }
                     StaticValue.select_filename = null;
 
                     Intent intent_backTomain=new Intent();
@@ -255,17 +259,6 @@ public class NormalAttendence extends Activity
             }
         }
     }
-	/*
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
-		super.onActivityResult(requestCode, resultCode, data);
-		file_path=data.getData();
-		System.out.println("文件路径为："+file_path.toString());
-		Toast.makeText(this,"你选择的文件名为："+FileUtils.getFilename(file_path.toString())
-				+"\n"+"文件所在的路径为："+file_path.toString(),
-				Toast.LENGTH_SHORT).show();
-	}*/
 
     @SuppressWarnings("deprecation")
     @Override
@@ -531,12 +524,8 @@ public class NormalAttendence extends Activity
                 //修改数据库中文件传输记录表中对应文件状态
                 SQLiteManager.updateDataIn_FileStatusList(StaticValue.select_filename,1);
             }else if(BluetoothTools.ACTION_FILE_SEND_PERCENT.equals(action)){
-
-                System.out.println("文件总长度为："+StaticValue.file_send_length+"MB");
                 file_send_dialog.setMax(StaticValue.file_send_length);
                 file_send_dialog.setProgress(StaticValue.file_send_percent);
-                System.out.println("已传输文件长度为："+StaticValue.file_send_percent+"MB");
-
             }
 
         }

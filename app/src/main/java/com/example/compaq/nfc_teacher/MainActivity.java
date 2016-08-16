@@ -486,31 +486,6 @@ public class MainActivity extends SlidingFragmentActivity  implements View.OnCli
 									System.out.println("======选择文件开始======");
 									//弹出框定义
 									show_file_choose_window();
-									/*
-									AlertDialog.Builder choose_file_alertdialog=new AlertDialog.Builder(MainActivity.this);
-									choose_file_alertdialog.setTitle("请选择要下发的文件");
-									choose_file_alertdialog.setPositiveButton("确定",new DialogInterface.OnClickListener(){
-
-										@Override
-										public void onClick(DialogInterface arg0, int arg1) {
-											// TODO Auto-generated method stub
-											try{
-												//startActivityForResult(Intent.createChooser(intent, "请选择点名文件"),1);
-												//Intent intent_selectfile = new Intent(MainActivity.this, com.example.compaq.nfc_teacher.SelectFileActivity.class);
-												//startActivityForResult(intent_selectfile, com.example.compaq.nfc_teacher.SelectFileActivity.RESULT_CODE);
-											}catch(android.content.ActivityNotFoundException ex){
-												Toast.makeText(getApplicationContext(), "请安装文件选择器", Toast.LENGTH_LONG).show();
-											}
-											catch (NullPointerException e) {
-												// TODO: handle exception
-												e.printStackTrace();
-											}
-										}
-
-									});
-									choose_file_alertdialog.setNegativeButton("取消", null);
-									choose_file_alertdialog.show();
-									*/
 									break;
 								default:
 									break;

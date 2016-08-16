@@ -1,92 +1,52 @@
 package com.example.compaq.nfc_teacher;
 
 /**
- * Created by Compaq on 2016/6/8.
+ * 建立班级点名单工具类
+ *
  */
 
 import java.io.File;
 import java.io.IOException;
-
-
-import java.nio.channels.WritableByteChannel;
-import java.sql.Connection;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.Vector;
-
 import jxl.Sheet;
 import jxl.Workbook;
-
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-
-
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.gesture.Gesture;
-import android.gesture.GestureLibraries;
-import android.gesture.GestureLibrary;
-import android.gesture.GestureOverlayView;
 import android.net.Uri;
-import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.provider.SyncStateContract.Helpers;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
 @SuppressLint("SdCardPath")
-public class CreateNameList extends Activity{
+public class CreateNameList{
 
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
-        super.onCreate(savedInstanceState);
-    }
-
-    //导入Excel文件
+    /**
+     * 导入班级学生在exl文件中信息到数据库对应数据表中
+     * @param context
+     * @param uri 文件URI路径
+     * @throws Exception
+     */
     @SuppressWarnings("static-access")
     public static void myExcel(Context context,Uri uri) throws Exception{
-
 
         //获取文件
         File file=new File(uri.getPath());
 
-        //读取数据
+        //读取exl文件中数据
         Workbook workbook=Workbook.getWorkbook(file);
         Sheet sheet=workbook.getSheet(0);
         int row_num=sheet.getRows();
         int column_num=sheet.getColumns();
         StaticValue.MAX=row_num;
         System.out.println("开始读入数据！表的列数为："+column_num+"行数为:"+row_num);
-        System.out.println("本点名表是"+sheet.getCell(0, 0).getContents());
         StaticValue.MY_TABLE_NAME=sheet.getCell(0, 0).getContents();
-        //StaticValue.INNERNAMELIST=StaticValue.INNERNAMELIST+sheet.getCell(0, 0).getContents();
-        //创建数据库
-        System.out.println(StaticValue.MY_TABLE_NAME);
-        //创建数据库
+        //创建数据表
         SQLiteManager helper=new SQLiteManager(context);
-        System.out.println("==========="+StaticValue.MY_TABLE_NAME+"============");
         helper.CreateTable(StaticValue.MY_TABLE_NAME);
-
-        //NameListDbHelper myhelper=namelist.getdbhelper();
-        helper.clearall(StaticValue.MY_TABLE_NAME);
+        helper.clearall(StaticValue.MY_TABLE_NAME);//清除之前在数据库中的同名数据表中数据
         //自定义数据插入时间
         SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         java.util.Date date11 = df1.parse("2000-1-1 00:00:00.0");
@@ -102,29 +62,12 @@ public class CreateNameList extends Activity{
     }
 
 
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO Auto-generated method stub
-        super.onActivityResult(requestCode, resultCode, data);
-        //Intent intent=new Intent("android.intent.action.VIEW");
-        //intent.addCategory("android.intent.category.DEFAULT");
-        //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        Uri uri=data.getData();
-        System.out.println("回调结果为:"+uri);
-        //intent.setDataAndType(uri, "application/*");
-        try {
-            //将数据读取入数据库
-            myExcel(this,uri);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        //System.out.println("回调结果为:"+uri);
-        //startActivity(intent);
-    }
-    //加载名单列表
+    /**
+     * 加载新建名单历史列表
+     * @param context
+     * @param db_list_str 存储新建名单历史列表的字符串数组
+     * @param listview 显示列表的目标ListView
+     */
     public static void load_namelist(Context context,Vector<String> db_list_str,ListView listview)
     {
         //添加适配器
@@ -134,7 +77,12 @@ public class CreateNameList extends Activity{
     }
 
 
-    //选择名单的功能实现函数
+    /**
+     * 遍历数据库中所有点民班级数据表表名
+     * @param package_name 包名
+     * @param class_name
+     * @param db_list_str_2 存储新建名单历史列表的字符串数组
+     */
     public static void select_namelist(String package_name,final Context class_name,Vector<String> db_list_str_2)
     {
 
@@ -148,16 +96,8 @@ public class CreateNameList extends Activity{
         else{
             File[] db_list=db.listFiles();
             System.out.println(db_list.length);
-			/*final String[] db_list_str = new String[db_list.length];
-
-			//初始化String数组
-			for(int j=0;j<db_list.length;j++){
-				db_list_str[j]=" ";
-			}
-			*/
 
             //遍历表名
-            //创建数据库
             SQLiteManager myhelper = new SQLiteManager(class_name);
             Cursor cursor=myhelper.get_tablename();
             int i=0;
@@ -182,45 +122,6 @@ public class CreateNameList extends Activity{
             }
             System.out.println("遍历结束");
 
-			/*//转化为String数组
-			final String[] db_list_str=new String[str.size()];
-			for(int j=0;j<str.size();j++){
-				db_list_str[j]=str.elementAt(j);
-			}
-			*/
-
-
-
-
-
         }
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        // TODO Auto-generated method stub
-        Toast.makeText(getApplicationContext(), "回到主页", Toast.LENGTH_LONG).show();
-        Intent intent=new Intent();
-        intent.setClass(CreateNameList.this,MainActivity.class);
-        CreateNameList.this.startActivity(intent);
-        finish();
-        return super.onKeyDown(keyCode, event);
-    }
-
-
-
-    //回到主页
-    class back_listener implements View.OnClickListener{
-
-        @Override
-        public void onClick(View arg0) {
-            // TODO Auto-generated method stub
-            Toast.makeText(getApplicationContext(), "回到主页", Toast.LENGTH_LONG).show();
-            Intent intent=new Intent();
-            intent.setClass(CreateNameList.this,MainActivity.class);
-            CreateNameList.this.startActivity(intent);
-            finish();
-        }
-
     }
 }
