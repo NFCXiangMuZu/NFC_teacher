@@ -217,13 +217,13 @@ public class NormalAttendence extends Activity{
             if(rawMsgs!=null) {
                 // only one message sent during the beam
                 NdefMessage msg = (NdefMessage) rawMsgs[0];
-
-                //循环处理接收到的一组NdefRecord
-                for (int i = 0; i < msg.getRecords().length; i += 4) {
-                    result_macaddress = new String(msg.getRecords()[i].getPayload(), "GBK").substring(1);
-                    result_strname = new String(msg.getRecords()[i + 1].getPayload(), "UTF-8");
-                    result_strxuehao = new String(msg.getRecords()[i + 2].getPayload(), "UTF-8").substring(1, 11);
-                    result_strreflect_infor = new String(msg.getRecords()[i + 3].getPayload(), "UTF-8");
+                //判断是否是点名中继，若是，则不用发送文件
+                if(msg.getRecords().length<=4){
+                    //不是点名中继
+                    result_macaddress = new String(msg.getRecords()[0].getPayload(), "GBK").substring(1);
+                    result_strname = new String(msg.getRecords()[1].getPayload(), "UTF-8");
+                    result_strxuehao = new String(msg.getRecords()[2].getPayload(), "UTF-8").substring(1, 11);
+                    result_strreflect_infor = new String(msg.getRecords()[3].getPayload(), "UTF-8");
                     StaticValue.reflect_information.add(result_strreflect_infor);
                     FileHelper.writeSDFile(result_strreflect_infor, StaticValue.MY_TABLE_NAME + ".txt");
 
@@ -262,8 +262,8 @@ public class NormalAttendence extends Activity{
                         int_chuxi = result[0] + 1;//每一次接触都会让出席记录+1，其他不变
                         SQLiteManager.updateDataInNamelist(StaticValue.MY_TABLE_NAME, result_strname,
                                 result_strxuehao, int_chuxi, int_quexi, int_qingjia, now);
-                        Toast.makeText(this, result_strname + "信息被修改" , Toast.LENGTH_LONG).show();
-                        User_icon_button.setText(result_strname+"\n"+"已签到");
+                        Toast.makeText(this, result_strname + "信息被修改", Toast.LENGTH_LONG).show();
+                        User_icon_button.setText(result_strname + "\n" + "已签到");
                     } else {
                         Toast.makeText(this, "已经重复签到啦！！！", Toast.LENGTH_LONG).show();
                         int_chuxi = result[0];
@@ -297,6 +297,59 @@ public class NormalAttendence extends Activity{
                         file_send_dialog.show();
                     } else {
                         System.out.println("无文件可发！");
+                    }
+
+                }else {
+                    //是点名中继
+                    for (int i = 0; i < msg.getRecords().length; i += 4) {
+                        result_macaddress = new String(msg.getRecords()[i].getPayload(), "GBK").substring(1);
+                        result_strname = new String(msg.getRecords()[i + 1].getPayload(), "UTF-8");
+                        result_strxuehao = new String(msg.getRecords()[i + 2].getPayload(), "UTF-8").substring(1, 11);
+                        result_strreflect_infor = new String(msg.getRecords()[i + 3].getPayload(), "UTF-8");
+                        StaticValue.reflect_information.add(result_strreflect_infor);
+                        FileHelper.writeSDFile(result_strreflect_infor, StaticValue.MY_TABLE_NAME + ".txt");
+
+                        //获取数据库中原本的出勤数据
+                        int[] result = new int[3];
+                        result = SQLiteManager.query_all(StaticValue.MY_TABLE_NAME, result_strxuehao);
+
+                        //计算时间间隔，避免单次课多次拍卡
+                        long hours = 3;
+                        Timestamp now = new Timestamp(System.currentTimeMillis());//获取系统当前时间
+                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//定义格式，不显示毫秒
+                        String str = df.format(now);
+                        String time = SQLiteManager.query_time(StaticValue.MY_TABLE_NAME, result_strxuehao);
+                        Timestamp SQL_time = Timestamp.valueOf(time);
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        try {
+                            java.util.Date date = format.parse(time);
+                            java.util.Date date2 = format.parse(str);
+                            //计算时间间隔
+                            Calendar c1 = Calendar.getInstance();
+                            c1.setTime(date);
+                            Calendar c2 = Calendar.getInstance();
+                            c2.setTime(date2);
+                            long l1 = c1.getTimeInMillis();
+                            long l2 = c2.getTimeInMillis();
+                            hours = Math.abs((l2 - l1) / (3600000));
+                        } catch (ParseException e1) {
+                            // TODO Auto-generated catch block
+                            e1.printStackTrace();
+                        }
+
+                        int int_chuxi;
+                        int int_quexi = result[1];
+                        int int_qingjia = result[2];
+                        if (hours >= 2) {//默认两个小时内不能重复签到
+                            int_chuxi = result[0] + 1;//每一次接触都会让出席记录+1，其他不变
+                            SQLiteManager.updateDataInNamelist(StaticValue.MY_TABLE_NAME, result_strname,
+                                    result_strxuehao, int_chuxi, int_quexi, int_qingjia, now);
+                            Toast.makeText(this, result_strname + "信息被修改", Toast.LENGTH_LONG).show();
+                            User_icon_button.setText(result_strname + "\n" + "已签到");
+                        } else {
+                            Toast.makeText(this, "已经重复签到啦！！！", Toast.LENGTH_LONG).show();
+                            int_chuxi = result[0];
+                        }
                     }
                 }
             }else{
