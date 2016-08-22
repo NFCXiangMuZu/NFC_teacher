@@ -134,7 +134,7 @@ public class NormalAttendence extends Activity{
                     }
 
                     StaticValue.select_filename = null;
-
+                    StaticValue.receive_file_student_num = 0;
                     Intent intent_backTomain=new Intent();
                     intent_backTomain.setClass(NormalAttendence.this,MainActivity.class );
                     NormalAttendence.this.startActivity(intent_backTomain);
@@ -289,12 +289,19 @@ public class NormalAttendence extends Activity{
                     if (StaticValue.select_filename != null) {
                         Thread thead = new sendThread();
                         thead.start();
+                        StaticValue.receive_file_student_num++;
                         //文件传输进度条对话框显示
-                        file_send_dialog = new ProgressDialog(NormalAttendence.this);
-                        file_send_dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                        file_send_dialog.setTitle("文件发送中");
-                        file_send_dialog.setCancelable(true);
-                        file_send_dialog.show();
+                        if(StaticValue.receive_file_student_num>1){
+                            file_send_dialog.setTitle("有"+StaticValue.receive_file_student_num+"名学生接收中");
+                        }else{
+                            file_send_dialog = new ProgressDialog(NormalAttendence.this);
+                            file_send_dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                            file_send_dialog.setTitle("有"+StaticValue.receive_file_student_num+"名学生接收中");
+                            file_send_dialog.setIndeterminate(true);
+                            file_send_dialog.setCancelable(true);
+                            file_send_dialog.show();
+                        }
+
                     } else {
                         System.out.println("无文件可发！");
                     }
@@ -396,14 +403,20 @@ public class NormalAttendence extends Activity{
             System.out.println("文件传输成功！！");
             String action = arg1.getAction();
             if (BluetoothTools.ACTION_FILE_SEND_SUCCESS.equals(action)) {
-                file_send_dialog.cancel();
+                //System.out.println("目前在接受文件的学生数量："+StaticValue.receive_file_student_num);
+                StaticValue.receive_file_student_num--;
+                file_send_dialog.setTitle("有"+StaticValue.receive_file_student_num+"名学生接收中");
+                System.out.println("目前在接受文件的学生数量："+StaticValue.receive_file_student_num);
+                if(StaticValue.receive_file_student_num==0){
+                    file_send_dialog.cancel();
+                }
                 Toast.makeText(NormalAttendence.this, "文件发送成功", Toast.LENGTH_LONG).show();
                 System.out.println("发送时间为："+StaticValue.file_send_time);
                 //修改数据库中文件传输记录表中对应文件状态
                 SQLiteManager.updateDataIn_FileStatusList(StaticValue.select_filename,1);
             }else if(BluetoothTools.ACTION_FILE_SEND_PERCENT.equals(action)){
-                file_send_dialog.setMax(StaticValue.file_send_length);
-                file_send_dialog.setProgress(StaticValue.file_send_percent);
+                //file_send_dialog.setMax(StaticValue.file_send_length);
+                //file_send_dialog.setProgress(StaticValue.file_send_percent);
             }
 
         }

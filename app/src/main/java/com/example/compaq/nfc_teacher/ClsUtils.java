@@ -1,5 +1,9 @@
 package com.example.compaq.nfc_teacher;
 
+/**
+ * 蓝牙连接配对工具类
+ */
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Field;
 import android.bluetooth.BluetoothAdapter;

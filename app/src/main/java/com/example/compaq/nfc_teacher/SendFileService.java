@@ -61,20 +61,25 @@ public class SendFileService extends Service {
 				e.printStackTrace();
 			}
 
-			String action = intent.getAction();
-			if (BluetoothTools.ACTION_DATA_TO_SERVICE.equals(action)) {
-				communSocket = new BluetoothCommunSocket(handler,socket);
-				final TransmitBean transmit = (TransmitBean)intent.getExtras().getSerializable(BluetoothTools.DATA);
-				if (communSocket != null) {
-					class MyRunnable implements Runnable{
-						public void run(){
-							//开始文件发送
-							communSocket.write(transmit);
+			if(socket!=null){
+				System.out.println("socket获取成功！");
+				String action = intent.getAction();
+				if (BluetoothTools.ACTION_DATA_TO_SERVICE.equals(action)) {
+					communSocket = new BluetoothCommunSocket(handler,socket);
+					final TransmitBean transmit = (TransmitBean)intent.getExtras().getSerializable(BluetoothTools.DATA);
+					if (communSocket != null) {
+						class MyRunnable implements Runnable{
+							public void run(){
+								//开始文件发送
+								communSocket.write(transmit);
+							}
 						}
+						Thread t=new Thread(new MyRunnable());
+						t.start();
 					}
-					Thread t=new Thread(new MyRunnable());
-					t.start();
 				}
+			}else{
+				System.out.println("socket获取失败！");
 			}
 		}
 	};

@@ -28,4 +28,6 @@ public class StaticValue {
 	public static int file_send_percent = 0;
 	public static int file_send_length = 0;
 	public static double file_send_time;
+	//正在接收文件的学生数目
+	public static int receive_file_student_num = 0;
 }
