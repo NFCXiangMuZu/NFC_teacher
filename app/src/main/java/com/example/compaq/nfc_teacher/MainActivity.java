@@ -50,6 +50,11 @@ public class MainActivity extends SlidingFragmentActivity{
 	private Fragment mContent;
 	PopupMenu folder_menu=null;
 
+	//点名类型选择窗口
+	PopupWindow attendence_type_window = null;
+	Button attendence_type_window_close_button;
+	Button attendence_type_window_normal_button;
+	Button attendence_type_window_choudian_button;
 
 	//文件格式选择窗口
 	PopupWindow file_choose_window = null;
@@ -157,7 +162,34 @@ public class MainActivity extends SlidingFragmentActivity{
 	}
 
 	/**
+	 * 提示选择点名类型的窗口
+	 *
+	 */
+	private void show_attendence_type_window(){
+
+		contentView = LayoutInflater.from(MainActivity.this).inflate(R.layout.attendence_type_window, null);
+		attendence_type_window = new PopupWindow(contentView,600, 500);
+		attendence_type_window.setFocusable(true);
+
+		//初始化layout
+        attendence_type_window_close_button = (Button)contentView.findViewById(R.id.attendence_type_window_close_button);
+		attendence_type_window_normal_button = (Button)contentView.findViewById(R.id.attendence_type_window_normal_button);
+		attendence_type_window_choudian_button = (Button)contentView.findViewById(R.id.attendence_type_window_choudian_button);
+
+		attendence_type_window_close_button.setOnClickListener(new listener());
+		attendence_type_window_normal_button.setOnClickListener(new listener());
+		attendence_type_window_choudian_button.setOnClickListener(new listener());
+
+		//显示PopupWindow
+		View rootview = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_main, null);
+		attendence_type_window.showAtLocation(rootview, Gravity.CENTER, 0, 0);
+
+	}
+	
+
+	/**
 	 * 显示文件格式选择窗口
+	 *
 	****/
 
 	private void show_file_choose_window(){
@@ -308,12 +340,30 @@ public class MainActivity extends SlidingFragmentActivity{
 				case R.id.reflect_infor_button:
 					toggle();//弹出左侧侧滑菜单
 					break;
-				case R.id.attendence_button:
-					Intent intent_attendence=new Intent();
-					intent_attendence.setClass(MainActivity.this,NormalAttendence.class );
-					MainActivity.this.startActivity(intent_attendence);
+				/**
+				 * 选择点名类型窗口
+				 */
+				case R.id.attendence_button://点击后提示选择点名类型
+                    show_attendence_type_window();
+					break;
+				case R.id.attendence_type_window_close_button:
+					attendence_type_window.dismiss();
+					break;
+				case R.id.attendence_type_window_normal_button:
+					Intent intent_normal=new Intent();
+					intent_normal.setClass(MainActivity.this,NormalAttendence.class );
+					MainActivity.this.startActivity(intent_normal);
 					finish();
 					break;
+				case R.id.attendence_type_window_choudian_button:
+					Intent intent_choudian=new Intent();
+					intent_choudian.setClass(MainActivity.this,ChouDianActivity.class );
+					MainActivity.this.startActivity(intent_choudian);
+					finish();
+					break;
+				/**
+				 * 折叠按钮
+				 */
 				case R.id.folderbutton:
 					//创建popupmenu对象
 					folder_menu = new PopupMenu(MainActivity.this,folder_button);

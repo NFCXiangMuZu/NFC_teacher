@@ -54,20 +54,6 @@
         android:textSize="4pt"
         android:textColor="@color/Color_Black"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="100dp"
-        />
-
-    <Button
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:id="@+id/NA_ChouDian_button"
-        android:background="@drawable/button_background"
-        android:text="抽点"
-        android:textStyle="bold"
-        android:textSize="4pt"
-        android:textColor="@color/Color_Black"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_marginRight="50dp"
         android:layout_marginBottom="100dp"

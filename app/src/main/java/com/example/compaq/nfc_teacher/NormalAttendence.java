@@ -42,7 +42,6 @@ public class NormalAttendence extends Activity{
     ImageButton backTomain_button;
     Button pause_button;
     Button finish_button;
-    Button ChouDian_button;
     Button User_icon_button;
 
     //进度条对话框
@@ -105,13 +104,11 @@ public class NormalAttendence extends Activity{
         backTomain_button = (ImageButton)findViewById(R.id.NA_backToMain_button);
         pause_button = (Button)findViewById(R.id.NA_pause_button);
         finish_button = (Button)findViewById(R.id.NA_finish_button);
-        ChouDian_button = (Button)findViewById(R.id.NA_ChouDian_button);
         User_icon_button = (Button)findViewById(R.id.NA_user_icon_button);
 
         backTomain_button.setOnClickListener(new listener());
         pause_button.setOnClickListener(new listener());
         finish_button.setOnClickListener(new listener());
-        ChouDian_button.setOnClickListener(new listener());
         User_icon_button.setOnClickListener(new listener());
 
     }
@@ -140,11 +137,12 @@ public class NormalAttendence extends Activity{
                     NormalAttendence.this.startActivity(intent_backTomain);
                     finish();
                     break;
-                case R.id.NA_ChouDian_button://开启抽点功能
-                    Intent intent_test_sensor=new Intent();
-                    intent_test_sensor.setClass(NormalAttendence.this,ChouDianActivity.class );
-                    NormalAttendence.this.startActivity(intent_test_sensor);
-                    finish();
+                case R.id.NA_user_icon_button://点击查看文件传输情况
+                    if(file_send_dialog!=null){
+                        file_send_dialog.show();
+                    }else{
+                        Toast.makeText(NormalAttendence.this,"没有文件正在传输",Toast.LENGTH_SHORT).show();
+                    }
                     break;
             }
         }
@@ -415,6 +413,7 @@ public class NormalAttendence extends Activity{
                 //修改数据库中文件传输记录表中对应文件状态
                 SQLiteManager.updateDataIn_FileStatusList(StaticValue.select_filename,1);
             }else if(BluetoothTools.ACTION_FILE_SEND_PERCENT.equals(action)){
+                //显示精确的传输进度
                 //file_send_dialog.setMax(StaticValue.file_send_length);
                 //file_send_dialog.setProgress(StaticValue.file_send_percent);
             }

@@ -106,7 +106,7 @@ public class CreateNameList{
                 do{
                     System.out.println("======遍历======"+cursor.getString(0)+"=======表名======");
                     //db_list_str[i]=cursor.getString(0);
-                    if(i>1){
+                    if(i>3){
                         db_list_str_2.add(cursor.getString(0));
                         try {
                             System.out.println(cursor.getString(0)+".txt");
