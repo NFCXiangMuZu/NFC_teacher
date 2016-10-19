@@ -6,30 +6,63 @@
     android:background="@drawable/bm"
     android:orientation="vertical"
  >
- 
-    <TextView
-        android:id="@+id/ListDB_title"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" 
-        android:textSize="30sp"
-        android:gravity="center"
-        android:textColor="@color/Color_Black"
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:id="@+id/listview_database_layout_NB"
+        android:background="#fff"
+        >
+
+    <Button
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/listview_database_layout_leftbutton"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/back1"
+        android:layout_marginLeft="10dp"
+        android:layout_centerVertical="true"
         />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/listview_database_layout_title"
+        android:layout_centerInParent="true"
+        android:textColor="#000"
+        android:textSize="8pt"
+        android:text="点名情况"
+
+        />
+
+    <Button
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/listview_database_layout_folder_button"
+        android:background="@drawable/folderbutton1"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        />
+    </RelativeLayout>
+
 <RelativeLayout
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:id="@+id/Title"
-    android:padding="0dp"
+    android:paddingTop="20dp"
+    android:background="#fff"
      >
      <TextView
          android:id="@+id/Title_id"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
-         android:layout_alignParentLeft="true" 
+         android:layout_alignParentLeft="true"
          android:textSize="20sp"
-         android:paddingRight="25dp"
+         android:layout_marginLeft="10dp"
          android:text="序号"
-         android:textColor="@color/Color_Black"
+         android:textColor="#000"
+         android:textStyle="bold"
          />
     <TextView 
         android:id="@+id/Title_name"
@@ -37,9 +70,10 @@
         android:layout_height="?android:attr/listPreferredItemHeight"
         android:layout_toRightOf="@id/Title_id"
         android:textSize="20sp"
-        android:paddingRight="13dp"
+        android:layout_marginLeft="40dp"
         android:text="@string/name"
-        android:textColor="@color/Color_Black"
+        android:textColor="#000"
+        android:textStyle="bold"
         />
     <TextView 
         android:id="@+id/Title_chuxi"
@@ -50,7 +84,8 @@
         android:paddingLeft="50dp"
         android:paddingRight="20dp"
         android:text="@string/chuxi"
-        android:textColor="@color/Color_Black"
+        android:textColor="#000"
+        android:textStyle="bold"
         />
     <TextView 
         android:id="@+id/Title_quexi"
@@ -60,7 +95,8 @@
         android:textSize="20sp"
         android:paddingRight="20dp"
         android:text="@string/quexi"
-        android:textColor="@color/Color_Black"
+        android:textColor="#000"
+        android:textStyle="bold"
         />
     <TextView 
         android:id="@+id/Title_qingjia"
@@ -70,7 +106,8 @@
         android:textSize="20sp"
         android:layout_alignParentRight="true"
         android:text="@string/qingjia"
-        android:textColor="@color/Color_Black"
+        android:textColor="#000"
+        android:textStyle="bold"
         />
 </RelativeLayout>
     
@@ -80,6 +117,7 @@
         android:id="@+id/namelist_ListView"
         android:divider="#565c5d"
         android:dividerHeight="1dp"
+        android:background="#fff"
         >
     </ListView>
 

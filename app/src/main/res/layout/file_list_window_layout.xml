@@ -39,7 +39,7 @@
             android:layout_height="50dp"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="5dp"
-            android:background="@drawable/left_button"
+            android:background="@drawable/back1"
             android:layout_centerVertical="true"
             android:id="@+id/file_list_window_left_button"
 

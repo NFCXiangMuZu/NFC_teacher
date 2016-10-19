@@ -40,7 +40,7 @@ public class CreateNameList{
         Sheet sheet=workbook.getSheet(0);
         int row_num=sheet.getRows();
         int column_num=sheet.getColumns();
-        StaticValue.MAX=row_num;
+        StaticValue.MAX=40;
         System.out.println("开始读入数据！表的列数为："+column_num+"行数为:"+row_num);
         StaticValue.MY_TABLE_NAME=sheet.getCell(0, 0).getContents();
         //创建数据表
@@ -52,7 +52,7 @@ public class CreateNameList{
         java.util.Date date11 = df1.parse("2000-1-1 00:00:00.0");
         String time  = df1.format(date11);
         Timestamp now = Timestamp.valueOf(time);
-        for(int i=2;i<row_num;i++){
+        for(int i=2;i<42;i++){
             helper.insertDataToNamelist(StaticValue.MY_TABLE_NAME,
                     sheet.getCell(2, i).getContents(),
                     sheet.getCell(1,i).getContents(), 0, 0, 0,now);

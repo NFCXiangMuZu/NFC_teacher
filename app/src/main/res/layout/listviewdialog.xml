@@ -26,7 +26,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginTop="18dp"
         android:layout_toRightOf="@id/LDL_textview1_chuxi"
-        android:background="@drawable/plus_button"
+        android:background="@drawable/plus_button_low"
 
         />
 
@@ -51,7 +51,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="18dp"
         android:layout_toRightOf="@id/LDL_PlusNum_chuxi"
-        android:background="@drawable/minus_button"
+        android:background="@drawable/minus_button_low"
 
         />
 
@@ -76,7 +76,7 @@
         android:layout_marginLeft="5dp"
         android:layout_below="@id/LDL_PlusButton_chuxi"
         android:layout_toRightOf="@id/LDL_textview1_quexi"
-        android:background="@drawable/plus_button"
+        android:background="@drawable/plus_button_low"
         android:layout_marginTop="17dp"
 
         />
@@ -103,7 +103,7 @@
         android:layout_marginLeft="10dp"
         android:layout_below="@id/LDL_MinusButton_chuxi"
         android:layout_toRightOf="@id/LDL_PlusNum_chuxi"
-        android:background="@drawable/minus_button"
+        android:background="@drawable/minus_button_low"
         android:layout_marginTop="17dp"
 
         />
@@ -127,7 +127,7 @@
         android:layout_marginLeft="5dp"
         android:layout_below="@id/LDL_PlusButton_quexi"
         android:layout_toRightOf="@id/LDL_textview1_qingjia"
-        android:background="@drawable/plus_button"
+        android:background="@drawable/plus_button_low"
         android:layout_marginTop="17dp"
 
         />
@@ -154,7 +154,7 @@
         android:layout_marginLeft="10dp"
         android:layout_below="@id/LDL_MinusButton_quexi"
         android:layout_toRightOf="@id/LDL_PlusNum_qingjia"
-        android:background="@drawable/minus_button"
+        android:background="@drawable/minus_button_low"
         android:layout_marginTop="17dp"
 
         />
