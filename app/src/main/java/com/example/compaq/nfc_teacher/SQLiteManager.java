@@ -16,6 +16,43 @@ public class SQLiteManager {
 
 	public SQLiteManager(Context context){
 		myhelper=new NameListDbHelper(context);
+
+
+	}
+
+	//创建文件传输相关的两个数据表
+	public static void Create_Database_For_Filesend(){
+
+		SQLiteDatabase db = myhelper.getWritableDatabase();
+
+		db.execSQL("create table if not exists 文件分片传输记录表 (" +
+				"_id integer primary key,"
+				+"filename text,"
+				+"fenpian_order integer,"
+				+"if_end integer"
+				+");"
+		);
+
+		db.execSQL("create table if not exists 文件传输记录表 (" +
+				"_id integer primary key,"
+				+"filename text,"
+				+"if_finish integer"
+				+");"
+		);
+
+	}
+
+
+
+	//创建数据库
+	public static  void CreateDatabase(String name){
+
+		System.out.println("==============创建数据库"+name+"============");
+
+		SQLiteDatabase db=myhelper.getWritableDatabase();
+
+		db.execSQL("create database "+name+";");
+
 	}
 
 	//创建新表
@@ -47,8 +84,23 @@ public class SQLiteManager {
 		System.out.println("==============删除表"+name+"结束============");
 	}
 
-	//向数据库插入数据
-	public static void insertData(String TableName,String n,String x,int x1,int x2,int x3,Timestamp now){
+	//向数据库中文件传输记录表插入数据
+	public static void insertDataTo_FileStatusList(String filename,int status){
+
+		//获取数据库对象
+		System.out.println("开始向数据库中插入数据！");
+		SQLiteDatabase db=myhelper.getWritableDatabase();
+		//向表中插入数据
+		ContentValues values=new ContentValues();
+		values.put("filename",filename);
+		values.put("if_finish",status);
+		db.insert("文件传输记录表", null, values);
+		db.close();
+
+	}
+
+	//向数据库中班级名单表插入数据
+	public static void insertDataToNamelist(String TableName,String n,String x,int x1,int x2,int x3,Timestamp now){
 		//获取数据库对象
 		System.out.println("开始向数据库中插入数据！");
 		SQLiteDatabase db=myhelper.getWritableDatabase();
@@ -72,8 +124,23 @@ public class SQLiteManager {
 		db.close();
 	}
 
+	//更新文件传输记录表的数据
+	public static void updateDataIn_FileStatusList(String filename,int status){
+
+		System.out.println("更新数据！");
+		//获得数据库对象
+		SQLiteDatabase db=myhelper.getWritableDatabase();
+		//更新数据
+		ContentValues values=new ContentValues();
+		values.put("filename", filename);
+		values.put("if_finish", status);
+		db.update("文件传输记录表", values, "filename = '"+filename+"'", null);
+		db.close();
+
+	}
+
 	//更新数据库数据
-	public static void updateData(String TableName,String n,String x,int x1,int x2,int x3,Timestamp now){
+	public static void updateDataInNamelist(String TableName,String n,String x,int x1,int x2,int x3,Timestamp now){
 		System.out.println("更新数据！");
 		//获得数据库对象
 		SQLiteDatabase db=myhelper.getWritableDatabase();
@@ -350,17 +417,6 @@ public class SQLiteManager {
 		//删除
 		db.delete(TableName, "xuehao="+x, null);
 		System.out.println("删除成功");
-	}
-
-	public List<NameList> getScrolldata(int startresult,int maxresult){
-		List<NameList> namelists=new ArrayList<NameList>();
-		SQLiteDatabase db=myhelper.getReadableDatabase();
-		Cursor cursor=db.rawQuery("select * from "+StaticValue.MY_TABLE_NAME+" limit ?,?", new String[]{String.valueOf(startresult),String.valueOf(maxresult)});
-		while(cursor.moveToNext()){
-			namelists.add(new NameList(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4),cursor.getInt(0)));
-
-		}
-		return namelists;
 	}
 
 	public Cursor getCursorScrolldata(int startresult,int maxresult){

@@ -1,9 +1,13 @@
 package com.example.compaq.nfc_teacher;
 
-import android.widget.ImageView;
+/**
+ * 文件选择ListView列元素集合类
+ */
+
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 public class MyFile {
-	public ImageView mFileImageView;
-	public TextView mFileNameTV;
+	public TextView mFiletext;
+	public CheckBox mFileCheckbox;
 }

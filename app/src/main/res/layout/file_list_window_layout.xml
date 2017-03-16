@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:id="@+id/file_list_window_layout"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#fff"
+        android:layout_alignParentTop="true"
+        android:id="@+id/file_list_window_NB"
+        >
+
+        <Button
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/close_button_low"
+            android:layout_marginRight="5dp"
+            android:layout_centerVertical="true"
+            android:id="@+id/file_list_window_close_button"
+
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/file_list_window_title"
+            android:text="文件展示"
+            android:textSize="10pt"
+            android:textColor="#2d7fb9"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="10dp"
+            />
+
+        <Button
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/back1"
+            android:layout_centerVertical="true"
+            android:id="@+id/file_list_window_left_button"
+
+            />
+
+    </RelativeLayout>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/file_list_window_listview"
+        android:layout_below="@id/file_list_window_NB"
+        android:background="#fff"
+        android:divider="#666565"
+        android:dividerHeight="0.5dp"
+        ></ListView>
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:id="@+id/file_list_window_confirm_button"
+        android:layout_below="@id/file_list_window_listview"
+        android:background="#2477dc"
+        android:text="确认选择"
+        android:textColor="#fff"
+        />
+
+</RelativeLayout>

@@ -9,7 +9,10 @@
   	<color name="Color_Link">#5a5dff</color>
  
   	<color name="transparent">#00000000</color>
-  	
+
+  	<color name="listview_color_pressed">#3eb8f5</color>
+	<color name="listview_color_nopressed">#fff</color>
+
 	<drawable name="tv_normal">#FFFFFF</drawable>
 	<drawable name="tv_focused">#1F2FAB</drawable>
 	<drawable name="tv_pressed">#00cccc</drawable>

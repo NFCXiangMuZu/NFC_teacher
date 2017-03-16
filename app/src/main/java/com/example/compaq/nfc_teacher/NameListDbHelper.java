@@ -32,13 +32,6 @@ public class NameListDbHelper extends SQLiteOpenHelper{
 		// TODO Auto-generated method stub
 
 		System.out.println("=============onCreate=============");
-		arg0.execSQL("create table if not exists namelist "+"(" +
-				"_id integer primary key,"
-				+"name text,"
-				+"xuehao text,"
-				+"chuxi integer,"
-				+"quexi integer,"
-				+"qingjia integer);");
 	}
 
 	@Override

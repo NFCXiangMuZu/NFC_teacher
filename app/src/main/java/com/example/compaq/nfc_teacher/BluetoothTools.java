@@ -17,68 +17,13 @@ public class BluetoothTools {
 	/**
 	 * 本程序所使用的UUID
 	 */
-	//public static final UUID PRIVATE_UUID = UUID.fromString("0f3561b9-bda5-4672-84ff-ab1f98e349b6");
 	public static final UUID PRIVATE_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
-	/**
-	 * 字符串常量，存放在Intent中的设备对象
-	 */
-	public static final String DEVICE = "DEVICE";
-
-	/**
-	 * 字符串常量，服务器所在设备列表中的位置
-	 */
-	public static final String SERVER_INDEX = "SERVER_INDEX";
 
 	/**
 	 * 字符串常量，Intent中的数据
 	 */
 	public static final String DATA = "DATA";
-
-	/**
-	 * Action类型标识符，Action类型 为读到数据
-	 */
-	public static final String ACTION_READ_DATA = "ACTION_READ_DATA";
-
-	/**
-	 * Action类型标识符，Action类型为 搜索结束
-	 */
-	public static final String ACTION_DISCOVERY_FINISHED = "ACTION_DISCOVERY_FINISHED";
-
-	/**
-	 * Action类型标识符，Action类型为 开始搜索设备
-	 */
-	public static final String ACTION_START_DISCOVERY = "ACTION_START_DISCOVERY";
-
-	/**
-	 * Action：设备列表
-	 */
-	public static final String ACTION_FOUND_DEVICE = "ACTION_FOUND_DEVICE";
-
-	/**
-	 * Action：连接中断
-	 */
-	public static final String ACTION_ACL_DISCONNECTED = "ACTION_ACL_DISCONNECTED";
-
-	/**
-	 * Action：选择的用于连接的设备
-	 */
-	public static final String ACTION_SELECTED_DEVICE = "ACTION_SELECTED_DEVICE";
-
-	/**
-	 * Action：开启服务器
-	 */
-	public static final String ACTION_START_SERVER = "ACTION_STARRT_SERVER";
-
-	/**
-	 * Action：关闭后台Service
-	 */
-	public static final String ACTION_STOP_SERVICE = "ACTION_STOP_SERVICE";
-
-	/**
-	 * Action：关闭后台Service1
-	 */
-	public static final String ACTION_STOP_SERVICE1 = "ACTION_STOP_SERVICE1";
 
 	/**
 	 * Action：到Service的数据

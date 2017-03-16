@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:id="@+id/file_choose_window_layout"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#fff"
+        android:layout_alignParentTop="true"
+        android:id="@+id/file_choose_window_NB"
+        >
+
+        <Button
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/close_button_low"
+            android:layout_marginRight="5dp"
+            android:layout_centerVertical="true"
+            android:id="@+id/file_choose_window_close_button"
+
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/file_choose_window_title"
+            android:text="选择文件类型"
+            android:textSize="10pt"
+            android:textColor="#2d7fb9"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="10dp"
+            />
+
+    </RelativeLayout>
+
+    <Button
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="@drawable/file_choose_window_text_button"
+        android:layout_below="@id/file_choose_window_NB"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/file_choose_window_text_button"
+
+        />
+
+    <Button
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="@drawable/file_choose_window_zip_button"
+        android:layout_below="@id/file_choose_window_NB"
+        android:layout_alignParentRight="true"
+        android:id="@+id/file_choose_window_ZIP_button"
+
+        />
+
+    <Button
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="@drawable/file_choose_window_music_button"
+        android:layout_below="@id/file_choose_window_text_button"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/file_choose_window_music_button"
+
+        />
+
+    <Button
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="@drawable/file_choose_window_video_button"
+        android:layout_below="@id/file_choose_window_ZIP_button"
+        android:layout_alignParentRight="true"
+        android:id="@+id/file_choose_window_video_button"
+
+        />
+
+
+</RelativeLayout>

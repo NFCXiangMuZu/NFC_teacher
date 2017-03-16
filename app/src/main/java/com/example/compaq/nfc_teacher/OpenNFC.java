@@ -1,5 +1,9 @@
 package com.example.compaq.nfc_teacher;
 
+/**
+ * 打开NFC
+ */
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;

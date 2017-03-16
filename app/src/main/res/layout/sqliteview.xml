@@ -2,54 +2,52 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:id="@+id/SQLiteViewLayout"
-    android:padding="3dp"
      >
      <TextView
          android:id="@+id/TextView_id"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
-         android:layout_alignParentLeft="true" 
+         android:layout_alignParentLeft="true"
          android:textSize="20sp"
-         android:paddingRight="25dp"
+         android:layout_marginLeft="15dp"
+         android:textColor="@color/Color_Black"
          />
     <TextView 
         android:id="@+id/TextView_name"
         android:layout_width="wrap_content"
         android:layout_height="?android:attr/listPreferredItemHeight"
-        android:layout_toRightOf="@id/TextView_id"
+        android:layout_marginLeft="80dp"
         android:textSize="20sp"
+        android:textColor="@color/Color_Black"
         android:paddingRight="25dp"
-        />
-    <TextView 
-        android:id="@+id/TextView_xuehao"
-        android:layout_width="wrap_content"
-        android:layout_height="?android:attr/listPreferredItemHeight"
-        android:layout_toRightOf="@id/TextView_name"
-        android:textSize="20sp"
-        android:paddingRight="50dp"
         />
     <TextView 
         android:id="@+id/TextView_chuxi"
         android:layout_width="wrap_content"
         android:layout_height="?android:attr/listPreferredItemHeight"
-        android:layout_toRightOf="@id/TextView_xuehao"
         android:textSize="20sp"
-        android:paddingRight="50dp"
+        android:textColor="@color/Color_Black"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="160dp"
         />
     <TextView 
         android:id="@+id/TextView_quexi"
         android:layout_width="wrap_content"
         android:layout_height="?android:attr/listPreferredItemHeight"
-        android:layout_toRightOf="@id/TextView_chuxi"
         android:textSize="20sp"
-        android:paddingRight="50dp"
+        android:textColor="@color/Color_Black"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="100dp"
+
         />
     <TextView 
         android:id="@+id/TextView_qingjia"
         android:layout_width="wrap_content"
         android:layout_height="?android:attr/listPreferredItemHeight"
-        android:layout_toRightOf="@id/TextView_quexi"
         android:textSize="20sp"
         android:layout_alignParentRight="true"
+        android:textColor="@color/Color_Black"
+        android:layout_marginRight="40dp"
+
         />
 </RelativeLayout>

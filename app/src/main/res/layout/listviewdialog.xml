@@ -1,51 +1,162 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/Listview_Dialog_layout"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical"
+    android:layout_height="500dp"
+    android:background="@color/Color_White"
     >
    
     
     <TextView 
-        android:id="@+id/LDL_textview_chuxi"
+        android:id="@+id/LDL_textview1_chuxi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/chuxi"
-        android:textSize="15pt"
+        android:text="出席情况改变值："
+        android:textSize="8pt"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:textStyle="bold"
+        android:textColor="#30b2ea"
         />
-    <EditText 
-        android:id="@+id/LDL_EditText_chuxi"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:maxLines="6"
-        android:inputType="number"
+
+    <Button
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/LDL_PlusButton_chuxi"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="18dp"
+        android:layout_toRightOf="@id/LDL_textview1_chuxi"
+        android:background="@drawable/plus_button_low"
+
         />
+
+    <TextView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/LDL_PlusNum_chuxi"
+        android:layout_toRightOf="@id/LDL_PlusButton_chuxi"
+        android:layout_marginLeft="10dp"
+        android:text="0"
+        android:layout_marginTop="18dp"
+        android:gravity="center"
+        android:textColor="#000"
+        android:textSize="8pt"
+        android:background="@drawable/textview_border"
+        />
+
+    <Button
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/LDL_MinusButton_chuxi"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="18dp"
+        android:layout_toRightOf="@id/LDL_PlusNum_chuxi"
+        android:background="@drawable/minus_button_low"
+
+        />
+
     <TextView 
-        android:id="@+id/LDL_textview_quexi"
+        android:id="@+id/LDL_textview1_quexi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/quexi"
-        android:textSize="15pt"
+        android:text="缺席情况改变值："
+        android:textSize="8pt"
+        android:layout_marginLeft="20dp"
+        android:textStyle="bold"
+        android:textColor="#30b2ea"
+        android:layout_below="@id/LDL_textview1_chuxi"
+        android:layout_marginTop="23dp"
+
+
         />
-    <EditText 
-        android:id="@+id/LDL_EditText_quexi"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:maxLines="6"
-        android:inputType="number"
+    <Button
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/LDL_PlusButton_quexi"
+        android:layout_marginLeft="5dp"
+        android:layout_below="@id/LDL_PlusButton_chuxi"
+        android:layout_toRightOf="@id/LDL_textview1_quexi"
+        android:background="@drawable/plus_button_low"
+        android:layout_marginTop="17dp"
+
         />
+
+    <TextView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/LDL_PlusNum_quexi"
+        android:layout_toRightOf="@id/LDL_PlusButton_quexi"
+        android:layout_marginLeft="10dp"
+        android:text="0"
+        android:layout_below="@id/LDL_PlusNum_chuxi"
+        android:gravity="center"
+        android:textColor="#000"
+        android:textSize="8pt"
+        android:background="@drawable/textview_border"
+        android:layout_marginTop="17dp"
+        />
+
+    <Button
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/LDL_MinusButton_quexi"
+        android:layout_marginLeft="10dp"
+        android:layout_below="@id/LDL_MinusButton_chuxi"
+        android:layout_toRightOf="@id/LDL_PlusNum_chuxi"
+        android:background="@drawable/minus_button_low"
+        android:layout_marginTop="17dp"
+
+        />
+
     <TextView 
-        android:id="@+id/LDL_textview_qingjia"
+        android:id="@+id/LDL_textview1_qingjia"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/qingjia"
-        android:textSize="15pt"
+        android:text="请假情况改变值："
+        android:textSize="8pt"
+        android:layout_marginLeft="20dp"
+        android:textStyle="bold"
+        android:textColor="#30b2ea"
+        android:layout_below="@id/LDL_textview1_quexi"
+        android:layout_marginTop="26dp"
         />
-    <EditText 
-        android:id="@+id/LDL_EditText_qingjia"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:maxLines="6"
-        android:inputType="number"
+    <Button
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/LDL_PlusButton_qingjia"
+        android:layout_marginLeft="5dp"
+        android:layout_below="@id/LDL_PlusButton_quexi"
+        android:layout_toRightOf="@id/LDL_textview1_qingjia"
+        android:background="@drawable/plus_button_low"
+        android:layout_marginTop="17dp"
+
         />
-</LinearLayout>
+
+    <TextView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/LDL_PlusNum_qingjia"
+        android:layout_toRightOf="@id/LDL_PlusButton_qingjia"
+        android:layout_marginLeft="10dp"
+        android:text="0"
+        android:layout_below="@id/LDL_PlusNum_quexi"
+        android:gravity="center"
+        android:textColor="#000"
+        android:textSize="8pt"
+        android:background="@drawable/textview_border"
+        android:layout_marginTop="17dp"
+        />
+
+    <Button
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/LDL_MinusButton_qingjia"
+        android:layout_marginLeft="10dp"
+        android:layout_below="@id/LDL_MinusButton_quexi"
+        android:layout_toRightOf="@id/LDL_PlusNum_qingjia"
+        android:background="@drawable/minus_button_low"
+        android:layout_marginTop="17dp"
+
+        />
+
+</RelativeLayout>
